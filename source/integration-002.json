@@ -1,0 +1,1170 @@
+[
+    {
+        "module_id": "flow_parameters",
+        "name": "Flow Parameters",
+        "information": "Flow parameters definition",
+        "type": "parameters",
+        "subtype":"flow",
+        "operation" : "none",
+        "description" : "Flow parameters definition",
+        "parameters": [
+            {
+                "name": "senha",
+                "id" : "[]B6mHO2aB : senha[/]",
+                "type": "string",
+                "description": "Senha de Acesso Systax",
+                "sample": "pass123"
+            },
+            {
+                "name": "username",
+                "id" : "[]AtNbisaZ : username[/]",
+                "type": "string",
+                "description": "Usuário de Acesso Systax",
+                "sample": "user123"
+            },
+            {
+                "name": "limite_ncm",
+                "id" : "[]ubIQsBQY : limite_ncm[/]",
+                "type": "number",
+                "description": "Quantidade de NCMs recuperados por query",
+                "sample": "1"
+            },
+            {
+                "name": "offset_ncm",
+                "id" : "[]tf0S5jkJ : offset_ncm[/]",
+                "type": "number",
+                "description": "Offset de recuperação de NCM",
+                "sample": "0"
+            },
+            {
+                "name": "produtos",
+                "id" : "[]HwWjJhdJ : produtos[/]",
+                "type": "number",
+                "description": "Número de Produtos Processados - Monitor",
+                "sample": "0"
+            },
+            {
+                "name": "grupos",
+                "id" : "[]qp6HfFFa : grupos[/]",
+                "type": "number",
+                "description": "Número de Grupos Processados - Monitor",
+                "sample": "0"
+            },
+            {
+                "name": "perfil_remetente",
+                "id" : "[]p97ZXrw4 : perfil_remetente[/]",
+                "type": "string",
+                "description": "Perfil de Origem",
+                "sample": "1"
+            },
+            {
+                "name": "ponteiro_khan",
+                "id" : "[]HQm0eVNg : ponteiro_khan[/]",
+                "type": "string",
+                "description": "Ponteiro de Tempo da Última Atualização",
+                "sample": "2022-10-24 04:30:09.565"
+            },
+            {
+                "name": "natureza_oper",
+                "id" : "[]57rBngCx : natureza_oper[/]",
+                "type": "string",
+                "description": "Natureza da Operação",
+                "sample": "120"
+            },
+            {
+                "name": "perfil_destino",
+                "id" : "[]G3XM98ma : perfil_destino[/]",
+                "type": "string",
+                "description": "Perfil de Destino",
+                "sample": "'6','140'"
+            },
+            {
+                "name": "acao_registra_produto",
+                "id" : "[]gUAVdCGV : acao_registra_produto[/]",
+                "type": "string",
+                "description": "Ação de Incluir Produto na Systax",
+                "sample": "1"
+            },
+            {
+                "name": "new_products",
+                "id" : "[]zCsESXZM : new_products[/]",
+                "type": "array",
+                "description": "List of successful Products",
+                "sample": "[]"
+            }
+        ],
+        "next": []
+    },
+    {
+        "module_id": "afXfxnp8",
+        "name": "Time Trigger",
+        "information": "Roda uma vez por dia",
+        "type": "trigger",
+        "subtype": "timer",
+        "operation": "repeat",
+        "description": "Timer",
+        "parameters": [
+            {
+                "name": "frequency",
+                "value": "1-day"
+            },
+            {
+                "name": "time",
+                "value": "01:00:00"
+            },
+            {
+                "name": "next",
+                "value": "2022:12:31:23:59:59"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "XkDBD4Aq"
+            }
+        ]
+    },
+    {
+        "module_id": "XkDBD4Aq",
+        "name": "DO",
+        "information": "Enquanto houverem produtos alterados no DB",
+        "type": "tool",
+        "subtype": "do",
+        "operation": "start",
+        "description": "do while",
+        "origin": "none",
+        "parameters": [],
+        "next": [
+            {
+                "type": "single",
+                "id": "RXvEixD6"
+            }
+        ]
+    },
+    {
+        "module_id": "RXvEixD6",
+        "name": "Khan",
+        "information": "Recura NCM de produtos alterados recentemente",
+        "type": "connector",
+        "subtype": "database",
+        "operation": "Recupera NCMs",
+        "description": "Recupera NCMs",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "limite",
+                "value": "[]ubIQsBQY : limite_ncm[/]"
+            },
+            {
+                "name": "offset",
+                "value": "[]tf0S5jkJ : offset_ncm[/]"
+            },
+            {
+                "name": "ponteiro",
+                "value": "[]HQm0eVNg : ponteiro_khan[/]"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "tQUBPGEL"
+            }
+        ]
+    },
+    {
+        "module_id": "tQUBPGEL",
+        "name": "Khan",
+        "information": "Recupera origens do NCM recem obtido",
+        "type": "connector",
+        "subtype": "database",
+        "operation": "Recupera Origens",
+        "description": "Recupera Origens de um dado NCM",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "ncm",
+                "smop": {
+                    "param1": "{}RXvEixD6 : rows{/}",
+                    "operation": "$count(param1) = 0 ? \"\" : param1[0].codclass"
+                }
+            },
+            {
+                "name": "ponteiro",
+                "value": "[]HQm0eVNg : ponteiro_khan[/]"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "7kwlhTXu"
+            }
+        ]
+    },
+    {
+        "module_id": "7kwlhTXu",
+        "name": "FOR",
+        "information": "Executa para cada uma das origens do NCM",
+        "type": "tool",
+        "subtype": "for",
+        "operation": "start",
+        "description": "Execute for each element on array",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "array",
+                "value": "{}tQUBPGEL : rows{/}"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "xErCrbR2"
+            }
+        ]
+    },
+    {
+        "module_id": "xErCrbR2",
+        "name": "Khan",
+        "information": "Recuper Grupos de Tarifação",
+        "type": "connector",
+        "subtype": "database",
+        "operation": "Recupera Grupos Restrito",
+        "description": "Recupera Grupos com Restrição",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "ncm",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1[0].codclass"
+                }
+            },
+            {
+                "name": "ponteiro",
+                "value": "[]HQm0eVNg : ponteiro_khan[/]"
+            },
+            {
+                "name": "origem",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "perfil_destino",
+                "value": "[]G3XM98ma : perfil_destino[/]"
+            },
+            {
+                "name": "perfil_remetente",
+                "value": "[]p97ZXrw4 : perfil_remetente[/]"
+            },
+            {
+                "name": "natureza_oper",
+                "value": "[]57rBngCx : natureza_oper[/]"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "NBGKWWMD"
+            }
+        ]
+    },
+    {
+        "module_id": "NBGKWWMD",
+        "name": "Systax",
+        "information": "Carrega produtos como NCM na Systax",
+        "type": "connector",
+        "subtype": "rest",
+        "operation": "Carga NCM/Produto",
+        "description": "Carrega Produto",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "codigo_produto",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1[0].codclass"
+                }
+            },
+            {
+                "name": "origem",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "acao",
+                "value": "[]gUAVdCGV : acao_registra_produto[/]"
+            },
+            {
+                "name": "username",
+                "value": "[]AtNbisaZ : username[/]"
+            },
+            {
+                "name": "senha",
+                "value": "[]B6mHO2aB : senha[/]"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "pP14uHcx"
+            }
+        ]
+    },
+    {
+        "module_id": "pP14uHcx",
+        "name": "IF",
+        "information": "Verifica se tivemos erro no passo anterior",
+        "type": "tool",
+        "subtype": "if",
+        "operation": "",
+        "description": "Match conditions",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "variable1",
+                "smop": {
+                    "parm1": "{}NBGKWWMD : status{/}",
+                    "operation": "param1.cod_status"
+                }
+            },
+            {
+                "name": "variable2",
+                "value": "0"
+            },
+            {
+                "name": "condition",
+                "value": ">"
+            }
+        ],
+        "next": [
+            {
+                "type": "true",
+                "id": "GgaJl3St"
+            },
+            {
+                "type": "false",
+                "id": "ZlH6W71A"
+            }
+        ]
+    },
+    {
+        "module_id": "GgaJl3St",
+        "name": "Log",
+        "information": "Gera notificação de ERRO",
+        "type": "tool",
+        "subtype": "log",
+        "description": "Log Module",
+        "parameters": [
+            {
+                "name": "target",
+                "value": [
+                    "local",
+                    "email"
+                ]
+            },
+            {
+                "name": "contents",
+                "value": [
+                    "company",
+                    "integration",
+                    "flow_id",
+                    "execution",
+                    "severity",
+                    "timestamp"
+                ]
+            },
+            {
+                "name": "severity",
+                "value": "error"
+            },
+            {
+                "name": "timestamp",
+                "value": "[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]"
+            },
+            {
+                "name": "timezone",
+                "value": "-0300"
+            },
+            {
+                "name": "p1_name",
+                "value": "ncm"
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1.codclass"
+                }
+            },
+            {
+                "name": "p2_name",
+                "value": "origem"
+            },
+            {
+                "name": "p2_value",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "p3_name",
+                "value": "status"
+            },
+            {
+                "name": "p3_value",
+                "smop": {
+                    "parm1": "{}NBGKWWMD : status{/}",
+                    "operation": "param1.cod_status"
+                }
+            },
+            {
+                "name": "p4_name",
+                "value": "msg"
+            },
+            {
+                "name": "p4_value",
+                "smop": {
+                    "parm1": "{}NBGKWWMD : status{/}",
+                    "operation": "param1.msg_status"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "m6tnRABM"
+            }
+        ]
+    },
+    {
+        "module_id": "ZlH6W71A",
+        "name": "FOR",
+        "information": "Executa para cada grupo de tributação",
+        "type": "tool",
+        "subtype": "for",
+        "operation": "start",
+        "description": "For each element in the array",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "array",
+                "value": "{}xErCrbR2 : rows{/}"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "pMy7tU2C"
+            }
+        ]
+    },
+    {
+        "module_id": "pMy7tU2C",
+        "name": "Transformation",
+        "information": "Monta definição de Grupo",
+        "type": "tool",
+        "subtype": "transform",
+        "operation": "",
+        "description": "JSONata Module",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "data",
+                "value": "DATA"
+            },
+            {
+                "name": "jsonata",
+                "value": "jsonata code"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "vZTOOrN7"
+            }
+        ]
+    },
+    {
+        "module_id": "vZTOOrN7",
+        "name": "IF",
+        "information": "Verifica se tratamos com grupo de exceção",
+        "type": "tool",
+        "subtype": "if",
+        "operation": "",
+        "description": "Match conditions",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "variable1",
+                "smop": {
+                    "parm1": "{}pMy7tU2C : data{/}",
+                    "operation": "param1.exception"
+                }
+            },
+            {
+                "name": "variable2",
+                "value": "false"
+            },
+            {
+                "name": "condition",
+                "value": "=="
+            }
+        ],
+        "next": [
+            {
+                "type": "true",
+                "id": "DT7mtHhb"
+            },
+            {
+                "type": "false",
+                "id": "ewhjsDSH"
+            }
+        ]
+    },
+    {
+        "module_id": "DT7mtHhb",
+        "name": "Systax",
+        "information": "Carrega grupo sem exceção de tributação",
+        "type": "connector",
+        "subtype": "rest",
+        "operation": "Carga Grupo Produto",
+        "description": "Carrega Grupo Produto",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "ufOrigem",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.UF_ORIGEM"
+                }
+            },
+            {
+                "name": "ufDestino",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.uf"
+                }
+            },
+            {
+                "name": "naturezaOp",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.natope"
+                }
+            },
+            {
+                "name": "perfilOrigem",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.PerfilREMETENTE"
+                }
+            },
+            {
+                "name": "perfilDestino",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.PerfilDestino"
+                }
+            },
+            {
+                "name": "codigo_produto",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1[0].codclass"
+                }
+            },
+            {
+                "name": "origem_comercial",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "username",
+                "value": "[]AtNbisaZ : username[/]"
+            },
+            {
+                "name": "senha",
+                "value": "[]B6mHO2aB : senha[/]"
+            },
+            {
+                "name": "acao",
+                "value": "[]gUAVdCGV : acao_registra_produto[/]"
+            },
+            {
+                "name": "grupo",
+                "smop": {
+                    "parm1": "{}pMy7tU2C : data{/}",
+                    "operation": "param1.grupo1"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "UlpemiHO"
+            }
+        ]
+    },
+    {
+        "module_id": "ewhjsDSH",
+        "name": "Systax",
+        "information": "Carrega grupo com primeira exceção tributária",
+        "type": "connector",
+        "subtype": "rest",
+        "operation": "Carga Grupo Produto",
+        "description": "Carrega Grupo Produto",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "ufOrigem",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.UF_ORIGEM"
+                }
+            },
+            {
+                "name": "ufDestino",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.uf"
+                }
+            },
+            {
+                "name": "naturezaOp",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.natope"
+                }
+            },
+            {
+                "name": "perfilOrigem",
+                "value": "2,725"
+            },
+            {
+                "name": "perfilDestino",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.PerfilDestino"
+                }
+            },
+            {
+                "name": "codigo_produto",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1[0].codclass"
+                }
+            },
+            {
+                "name": "origem_comercial",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "username",
+                "value": "[]AtNbisaZ : username[/]"
+            },
+            {
+                "name": "senha",
+                "value": "[]B6mHO2aB : senha[/]"
+            },
+            {
+                "name": "acao",
+                "value": "[]gUAVdCGV : acao_registra_produto[/]"
+            },
+            {
+                "name": "grupo",
+                "smop": {
+                    "parm1": "{}pMy7tU2C : data{/}",
+                    "operation": "param1.grupo2"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "YwUCJWju"
+            }
+        ]
+    },
+    {
+        "module_id": "YwUCJWju",
+        "name": "Systax",
+        "information": "Carrega grupo com segunda exceção tributária",
+        "type": "connector",
+        "subtype": "rest",
+        "operation": "Carga Grupo Produto",
+        "description": "Carrega Grupo Produto",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "ufOrigem",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.UF_ORIGEM"
+                }
+            },
+            {
+                "name": "ufDestino",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.uf"
+                }
+            },
+            {
+                "name": "naturezaOp",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.natope"
+                }
+            },
+            {
+                "name": "perfilOrigem",
+                "value": "2,786"
+            },
+            {
+                "name": "perfilDestino",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.PerfilDestino"
+                }
+            },
+            {
+                "name": "codigo_produto",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1[0].codclass"
+                }
+            },
+            {
+                "name": "origem_comercial",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "username",
+                "value": "[]AtNbisaZ : username[/]"
+            },
+            {
+                "name": "senha",
+                "value": "[]B6mHO2aB : senha[/]"
+            },
+            {
+                "name": "acao",
+                "value": "[]gUAVdCGV : acao_registra_produto[/]"
+            },
+            {
+                "name": "grupo",
+                "smop": {
+                    "parm1": "{}pMy7tU2C : data{/}",
+                    "operation": "param1.grupo3"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "UlpemiHO"
+            }
+        ]
+    },
+    {
+        "module_id": "UlpemiHO",
+        "name": "IF",
+        "information": "Verifica se tivemos algum erro com Systax",
+        "type": "tool",
+        "subtype": "if",
+        "operation": "",
+        "description": "Match conditions",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "variable1",
+                "smop": {
+                    "parm1": "{}DT7mtHhb : status{/}",
+                    "parm2": "{}YwUCJWju : status{/}",
+                    "operation": "param1 = null ? param2.cod_status : param1.cod_status"
+                }
+            },
+            {
+                "name": "variable2",
+                "value": "0"
+            },
+            {
+                "name": "condition",
+                "value": ">"
+            }
+        ],
+        "next": [
+            {
+                "type": "true",
+                "id": "VVtVRs3b"
+            },
+            {
+                "type": "false",
+                "id": "p4xfjS6E"
+            }
+        ]
+    },
+    {
+        "module_id": "VVtVRs3b",
+        "name": "Log",
+        "information": "Gera notificação de ERRO",
+        "type": "tool",
+        "subtype": "log",
+        "description": "Log Module",
+        "parameters": [
+            {
+                "name": "target",
+                "value": [
+                    "local",
+                    "email"
+                ]
+            },
+            {
+                "name": "contents",
+                "value": [
+                    "company",
+                    "integration",
+                    "component",
+                    "flow_id",
+                    "execution",
+                    "severity",
+                    "timestamp"
+                ]
+            },
+            {
+                "name": "component",
+                "value": "GCFtTV6SWa"
+            },
+            {
+                "name": "severity",
+                "value": "debug"
+            },
+            {
+                "name": "timestamp",
+                "value": "[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]"
+            },
+            {
+                "name": "timezone",
+                "value": "-0300"
+            },
+            {
+                "name": "p1_name",
+                "value": "ncm"
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1.codclass"
+                }
+            },
+            {
+                "name": "p2_name",
+                "value": "origem"
+            },
+            {
+                "name": "p2_value",
+                "smop": {
+                    "parm1": "{}7kwlhTXu : element{/}",
+                    "operation": "param1.origem_comercial"
+                }
+            },
+            {
+                "name": "p3_name",
+                "value": "grupo"
+            },
+            {
+                "name": "p3_value",
+                "smop": {
+                    "parm1": "{}ZlH6W71A : element{/}",
+                    "operation": "param1.UF_ORIGEM & \"-\" & param1.uf & \"-\" & param1.natope & \"-\" & param1.PerfilREMETENTE & \"-\" & param1.PerfilDestino"
+                }
+            },
+            {
+                "name": "p4_name",
+                "value": "error"
+            },
+            {
+                "name": "p4_value",
+                "smop": {
+                    "parm1": "{}DT7mtHhb : status{/}",
+                    "parm2": "{}YwUCJWju : status{/}",
+                    "operation": "$string(param1 = null ? param2.cod_status : param1.cod_status)"
+                }
+            },
+            {
+                "name": "p5_name",
+                "value": "msg"
+            },
+            {
+                "name": "p5_value",
+                "smop": {
+                    "parm1": "{}DT7mtHhb : status{/}",
+                    "parm2": "{}YwUCJWju : status{/}",
+                    "operation": "$string(param1 = null ? param2.msg_status : param1.msg_status)"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "p4xfjS6E"
+            }
+        ]
+    },
+    {
+        "module_id": "p4xfjS6E",
+        "name": "Update Parameters",
+        "information": "Atualiza contador de grupos",
+        "type": "tool",
+        "subtype": "update",
+        "description": "Update flow parameters",
+        "parameters": [
+            {
+                "name": "p1_name",
+                "value": "[]qp6HfFFa : grupos[/]"
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "[]qp6HfFFa : grupos[/]",
+                    "operation": "param1 + 1"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "T3UPamx6"
+            }
+        ]
+    },
+    {
+        "module_id": "T3UPamx6",
+        "name": "FOR",
+        "information": "Close loop for groups",
+        "type": "tool",
+        "subtype": "for",
+        "operation": "end",
+        "description": "For END",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "start",
+                "value": "ZlH6W71A"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "m6tnRABM"
+            }
+        ]
+    },
+    {
+        "module_id": "m6tnRABM",
+        "name": "Update Parameters",
+        "information": "Atualiza contador de produtos",
+        "type": "tool",
+        "subtype": "update",
+        "description": "Update flow parameters",
+        "parameters": [
+            {
+                "name": "p1_name",
+                "value": "[]HwWjJhdJ : produtos[/]"
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "[]HwWjJhdJ : produtos[/]",
+                    "operation": "param1 + 1"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "KwN0bud4"
+            }
+        ]
+    },
+    {
+        "module_id": "KwN0bud4",
+        "name": "FOR",
+        "information": "Close loop for produtos",
+        "type": "tool",
+        "subtype": "for",
+        "operation": "end",
+        "description": "For END",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "start",
+                "value": "7kwlhTXu"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "ISz0yl8z"
+            }
+        ]
+    },
+    {
+        "module_id": "ISz0yl8z",
+        "name": "Log",
+        "information": "Gera notificação de produto atualizado",
+        "type": "tool",
+        "subtype": "log",
+        "description": "Log Module",
+        "parameters": [
+            {
+                "name": "target",
+                "value": [
+                    "local"
+                ]
+            },
+            {
+                "name": "contents",
+                "value": [
+                    "company",
+                    "integration",
+                    "flow_id",
+                    "execution",
+                    "severity",
+                    "timestamp"
+                ]
+            },
+            {
+                "name": "severity",
+                "value": "debug"
+            },
+            {
+                "name": "timestamp",
+                "value": "[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]"
+            },
+            {
+                "name": "timezone",
+                "value": "-0300"
+            },
+            {
+                "name": "p1_name",
+                "value": "update ncm"
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "operation": "param1.codclass"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "Dq13l5Ov"
+            }
+        ]
+    },
+    {
+        "module_id": "Dq13l5Ov",
+        "name": "Update Parameters",
+        "information": "Atualiza offset NCM",
+        "type": "tool",
+        "subtype": "update",
+        "description": "Update flow parameters",
+        "parameters": [
+            {
+                "name": "p1_name",
+                "value": "[]tf0S5jkJ : offset_ncm[/]"
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "[]tf0S5jkJ : offset_ncm[/]",
+                    "operation": "param1 + 1"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "FNkPgl9d"
+            }
+        ]
+    },
+    {
+        "module_id": "FNkPgl9d",
+        "name": "WHILE",
+        "information": "do while new NCM > 0 (enquanto houver NCMs atualizados)",
+        "type": "tool",
+        "subtype": "do",
+        "operation": "while",
+        "description": "condition to decide do while next step",
+        "parameters": [
+            {
+                "name": "start",
+                "value": "XkDBD4Aq"
+            },
+            {
+                "name": "variable1",
+                "value": "{}RXvEixD6 : rowCount{/}"
+            },
+            {
+                "name": "variable2",
+                "value": "0"
+            },
+            {
+                "name": "condition",
+                "value": ">"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "KIvox37R"
+            }
+        ]
+    },
+    {
+        "module_id": "KIvox37R",
+        "name": "Update Parameters",
+        "information": "Zera contadores para próxima execução e atualiza ponteiro",
+        "type": "tool",
+        "subtype": "update",
+        "description": "Update flow parameters",
+        "parameters": [
+            {
+                "name": "p1_name",
+                "value": "[]tf0S5jkJ : offset_ncm[/]"
+            },
+            {
+                "name": "p1_value",
+                "value": "0"
+            },
+            {
+                "name": "p2_name",
+                "value": "[]HQm0eVNg : ponteiro_khan[/]"
+            },
+            {
+                "name": "p2_value",
+                "smop": {
+                    "operation": "$now('[Y0001]-[M01]-[D01] [H01]:[m01]:[s01].[f001]')"
+                }
+            }
+        ],
+        "next": []
+    }
+]

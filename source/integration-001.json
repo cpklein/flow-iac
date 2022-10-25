@@ -1,0 +1,392 @@
+[
+    {
+        "module_id": "L3RhbAF9",
+        "name": "Time Trigger",
+        "information": "Acionamento 1x ao dia",
+        "type": "trigger",
+        "subtype": "timer",
+        "operation": "repeat",
+        "description": "Timer",
+        "origin": "none",
+        "parameters": [
+            {
+                "name": "frequency",
+                "value": "1-day"
+            },
+            {
+                "name": "time",
+                "value": "01:00:00"
+            },
+            {
+                "name": "next",
+                "value": "2022:12:31:23:59:59"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "8PnLWzLW"
+            }
+        ]
+    },
+    {
+        "module_id": "8PnLWzLW",
+        "name": "DO",
+        "information": "Enquanto houverem registros novos no Systax",
+        "type": "tool",
+        "subtype": "do",
+        "operation": "start",
+        "description": "do while",
+        "origin": "none",
+        "parameters": [],
+        "next": [
+            {
+                "type": "single",
+                "id": "Ks5OwZyi"
+            }
+        ]
+    },
+    {
+        "module_id": "Ks5OwZyi",
+        "name": "Systax",
+        "information": "Leitura de regras atualizadas pela Systax",
+        "type": "connector",
+        "subtype": "rest",
+        "operation": "Leitura de Regras",
+        "description": "Leitura de Regras",
+        "origin": "id do módulo de origem",
+        "parameters": [
+            {
+                "name": "ponteiro_atualizacao",
+                "value": "[]cGNyJlvX : ponteiro[/]"
+            },
+            {
+                "name": "id_cenario",
+                "value": "[]c2yzc9Ix : id_cenario[/]"
+            },
+            {
+                "name": "codigo_produto",
+                "value": "[]Ztj9sOfN : codigo_produto[/]"
+            },
+            {
+                "name": "username",
+                "value": "[]TqaIbtDA : usuario[/]"
+            },
+            {
+                "name": "senha",
+                "value": "[]aCVyYCGD : senha[/]"
+            },
+            {
+                "name": "origem",
+                "value": "0"
+            },
+            {
+                "name": "pagina",
+                "value": "[]NLKIJjvK : pagina[/]"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "XSFWkHNY"
+            }
+        ]
+    },
+    {
+        "module_id": "XSFWkHNY",
+        "name": "IF",
+        "information": "Se operacao anterior obteve sucesso (200)",
+        "type": "tool",
+        "subtype": "if",
+        "description": "IF statement",
+        "parameters": [
+            {
+                "name": "variable1",
+                "smop": {
+                    "parm1": "{}Ks5OwZyi : responseHeader{/}",
+                    "operation": "param1.status"
+                }
+            },
+            {
+                "name": "variable2",
+                "value": "200"
+            },
+            {
+                "name": "condition",
+                "value": "=="
+            }
+        ],
+        "next": [
+            {
+                "type": "true",
+                "id": "AJMvuMCB"
+            },
+            {
+                "type": "false",
+                "id": "81AHDyBA"
+            }
+        ]
+    },
+    {
+        "module_id": "81AHDyBA",
+        "name": "Log",
+        "information": "Gera notificação de ERRO",
+        "type": "tool",
+        "subtype": "log",
+        "description": "Log Module",
+        "parameters": [
+            {
+                "name": "target",
+                "value": [
+                    "local"
+                ]
+            },
+            {
+                "name": "contents",
+                "value": [
+                    "flow_id",
+                    "execution",
+                    "severity",
+                    "timestamp"
+                ]
+            },
+            {
+                "name": "severity",
+                "value": "warning"
+            },
+            {
+                "name": "timestamp",
+                "value": "[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]"
+            },
+            {
+                "name": "p1_name",
+                "value": ""
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "parm1": "{}Ks5OwZyi : status{/}",
+                    "operation": "\"error:\"&param1.cod_status"
+                }
+            },
+            {
+                "name": "p2_name",
+                "value": ""
+            },
+            {
+                "name": "p2_value",
+                "smop": {
+                    "parm1": "{}Ks5OwZyi : status{/}",
+                    "operation": "\"msg:\"&param1.msg_status"
+                }
+            },
+            {
+                "name": "p3_name",
+                "value": ""
+            },
+            {
+                "name": "p3_value",
+                "smop": {
+                    "parm1": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
+                    "operation": "\"ponteiro:\"&param1"
+                }
+            }
+        ],
+        "next": []
+    },
+    {
+        "module_id": "AJMvuMCB",
+        "name": "Transformation",
+        "information": "Monta JSON para inserção em DB MSSQL",
+        "type": "tool",
+        "subtype": "transform",
+        "description": "JSONata module",
+        "parameters": [
+            {
+                "name": "data",
+                "value": "DATA"
+            },
+            {
+                "name": "jsonata",
+                "value" : "jsonata code"
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "iiHS2yIH"
+            }
+        ]
+    },
+    {
+        "module_id": "iiHS2yIH",
+        "name": "Khan",
+        "information": "Salva Regras no DB",
+        "type": "connector",
+        "subtype": "database",
+        "operation": "Salva Regras",
+        "description": "Salva Regras no DB",
+        "origin": "id do módulo de origem",
+        "parameters": [
+            {
+                "name": "array_regras",
+                "smop": {
+                    "parm1": "{}AJMvuMCB : data{/}",
+                    "operation": "param1.prod_count = 0 ? [] : param1.regras"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "NdrwDlCg"
+            }
+        ]
+    },
+    {
+        "module_id": "NdrwDlCg",
+        "name": "Update Parameters",
+        "information": "Atualiza informações dentro do loop",
+        "type": "tool",
+        "subtype": "update",
+        "description": "Update flow parameters",
+        "parameters": [
+            {
+                "name": "p1_name",
+                "value": "[]EpMNiyP7 : origem[/]"
+            },
+            {
+                "name": "p1_value",
+                "value": "{}AJMvuMCB : data.last_origem{/}"
+            },
+            {
+                "name": "p2_name",
+                "value": "[]c2yzc9Ix : id_cenario[/]"
+            },
+            {
+                "name": "p2_value",
+                "value": "{}AJMvuMCB : data.last_id_cenario{/}"
+            },
+            {
+                "name": "p3_name",
+                "value": "[]YYEcJ78i : counter_regras[/]"
+            },
+            {
+                "name": "p3_value",
+                "smop": {
+                    "parm1": "{}AJMvuMCB : data{/}",
+                    "parm2": "[]YYEcJ78i : counter_regras[/]",
+                    "operation": "param1.prod_count + param2"
+                }
+            },
+            {
+                "name": "p4_name",
+                "value": "[]Ztj9sOfN : codigo_produto[/]"
+            },
+            {
+                "name": "p4_value",
+                "value": "{}AJMvuMCB : data.last_cod_prod{/}"
+            },
+            {
+                "name": "p5_name",
+                "value": "[]XAhVgMq0 : novo_ponteiro[/]",
+                "smop": {
+                    "parm1": "parameter1 reference",
+                    "parm2": "parameter2 reference",
+                    "operation": "jsonata expression"
+                }
+            },
+            {
+                "name": "p5_value",
+                "smop": {
+                    "parm1": "{}8PnLWzLW : loopCount{/}",
+                    "parm2": "[]XAhVgMq0 : novo_ponteiro[/]",
+                    "parm3": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
+                    "operation": "param1 = 0 ? param3 : param2"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "hV8SqOOw"
+            }
+        ]
+    },
+    {
+        "module_id": "hV8SqOOw",
+        "name": "WHILE",
+        "information": "do while rows from database == page (enquanto pagina de retorno de regras estiver cheia)",
+        "type": "tool",
+        "subtype": "do",
+        "operation": "while",
+        "description": "condition to decide do while next step",
+        "parameters": [
+            {
+                "name": "start",
+                "value": "8PnLWzLW"
+            },
+            {
+                "name": "variable1",
+                "value": "{}AJMvuMCB : data.prod_count{/}"
+            },
+            {
+                "name": "variable2",
+                "value": "[]NLKIJjvK : pagina[/]"
+            },
+            {
+                "name": "condition",
+                "value": "=="
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "V4PxPzUN"
+            }
+        ]
+    },
+    {
+        "module_id": "V4PxPzUN",
+        "name": "Update Parameters",
+        "information": "Atualiza informações para a próxima execução",
+        "type": "tool",
+        "subtype": "update",
+        "description": "Update flow parameters",
+        "parameters": [
+            {
+                "name": "p1_name",
+                "value": "[]EpMNiyP7 : origem[/]"
+            },
+            {
+                "name": "p1_value",
+                "value": "0"
+            },
+            {
+                "name": "p2_name",
+                "value": "[]c2yzc9Ix : id_cenario[/]"
+            },
+            {
+                "name": "p2_value",
+                "value": "1"
+            },
+            {
+                "name": "p3_name",
+                "value": "[]Ztj9sOfN : codigo_produto[/]"
+            },
+            {
+                "name": "p3_value",
+                "value": "1"
+            },
+            {
+                "name": "p4_name",
+                "value": "[]cGNyJlvX : ponteiro[/]"
+            },
+            {
+                "name": "p4_value",
+                "value": "[]XAhVgMq0 : novo_ponteiro[/]"
+            }
+        ],
+        "next": []
+    }
+]
