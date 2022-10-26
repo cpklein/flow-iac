@@ -103,7 +103,7 @@
             {
                 "name": "variable1",
                 "smop": {
-                    "parm1": "{}Ks5OwZyi : responseHeader{/}",
+                    "param1": "{}Ks5OwZyi : responseHeader{/}",
                     "operation": "param1.status"
                 }
             },
@@ -165,7 +165,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "{}Ks5OwZyi : status{/}",
+                    "param1": "{}Ks5OwZyi : status{/}",
                     "operation": "\"error:\"&param1.cod_status"
                 }
             },
@@ -176,7 +176,7 @@
             {
                 "name": "p2_value",
                 "smop": {
-                    "parm1": "{}Ks5OwZyi : status{/}",
+                    "param1": "{}Ks5OwZyi : status{/}",
                     "operation": "\"msg:\"&param1.msg_status"
                 }
             },
@@ -187,7 +187,7 @@
             {
                 "name": "p3_value",
                 "smop": {
-                    "parm1": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
+                    "param1": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
                     "operation": "\"ponteiro:\"&param1"
                 }
             }
@@ -231,7 +231,7 @@
             {
                 "name": "array_regras",
                 "smop": {
-                    "parm1": "{}AJMvuMCB : data{/}",
+                    "param1": "{}AJMvuMCB : data{/}",
                     "operation": "param1.prod_count = 0 ? [] : param1.regras"
                 }
             }
@@ -274,8 +274,8 @@
             {
                 "name": "p3_value",
                 "smop": {
-                    "parm1": "{}AJMvuMCB : data{/}",
-                    "parm2": "[]YYEcJ78i : counter_regras[/]",
+                    "param1": "{}AJMvuMCB : data{/}",
+                    "param2": "[]YYEcJ78i : counter_regras[/]",
                     "operation": "param1.prod_count + param2"
                 }
             },
@@ -291,17 +291,17 @@
                 "name": "p5_name",
                 "value": "[]XAhVgMq0 : novo_ponteiro[/]",
                 "smop": {
-                    "parm1": "parameter1 reference",
-                    "parm2": "parameter2 reference",
+                    "param1": "parameter1 reference",
+                    "param2": "parameter2 reference",
                     "operation": "jsonata expression"
                 }
             },
             {
                 "name": "p5_value",
                 "smop": {
-                    "parm1": "{}8PnLWzLW : loopCount{/}",
-                    "parm2": "[]XAhVgMq0 : novo_ponteiro[/]",
-                    "parm3": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
+                    "param1": "{}8PnLWzLW : loopCount{/}",
+                    "param2": "[]XAhVgMq0 : novo_ponteiro[/]",
+                    "param3": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
                     "operation": "param1 = 0 ? param3 : param2"
                 }
             }

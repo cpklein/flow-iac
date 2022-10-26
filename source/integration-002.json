@@ -235,7 +235,7 @@
             {
                 "name": "ncm",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1[0].codclass"
                 }
             },
@@ -246,7 +246,7 @@
             {
                 "name": "origem",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -283,14 +283,14 @@
             {
                 "name": "codigo_produto",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1[0].codclass"
                 }
             },
             {
                 "name": "origem",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -327,7 +327,7 @@
             {
                 "name": "variable1",
                 "smop": {
-                    "parm1": "{}NBGKWWMD : status{/}",
+                    "param1": "{}NBGKWWMD : status{/}",
                     "operation": "param1.cod_status"
                 }
             },
@@ -396,7 +396,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1.codclass"
                 }
             },
@@ -407,7 +407,7 @@
             {
                 "name": "p2_value",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -418,7 +418,7 @@
             {
                 "name": "p3_value",
                 "smop": {
-                    "parm1": "{}NBGKWWMD : status{/}",
+                    "param1": "{}NBGKWWMD : status{/}",
                     "operation": "param1.cod_status"
                 }
             },
@@ -429,7 +429,7 @@
             {
                 "name": "p4_value",
                 "smop": {
-                    "parm1": "{}NBGKWWMD : status{/}",
+                    "param1": "{}NBGKWWMD : status{/}",
                     "operation": "param1.msg_status"
                 }
             }
@@ -502,7 +502,7 @@
             {
                 "name": "variable1",
                 "smop": {
-                    "parm1": "{}pMy7tU2C : data{/}",
+                    "param1": "{}pMy7tU2C : data{/}",
                     "operation": "param1.exception"
                 }
             },
@@ -539,49 +539,49 @@
             {
                 "name": "ufOrigem",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.UF_ORIGEM"
                 }
             },
             {
                 "name": "ufDestino",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.uf"
                 }
             },
             {
                 "name": "naturezaOp",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.natope"
                 }
             },
             {
                 "name": "perfilOrigem",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.PerfilREMETENTE"
                 }
             },
             {
                 "name": "perfilDestino",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.PerfilDestino"
                 }
             },
             {
                 "name": "codigo_produto",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1[0].codclass"
                 }
             },
             {
                 "name": "origem_comercial",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -600,7 +600,7 @@
             {
                 "name": "grupo",
                 "smop": {
-                    "parm1": "{}pMy7tU2C : data{/}",
+                    "param1": "{}pMy7tU2C : data{/}",
                     "operation": "param1.grupo1"
                 }
             }
@@ -625,21 +625,21 @@
             {
                 "name": "ufOrigem",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.UF_ORIGEM"
                 }
             },
             {
                 "name": "ufDestino",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.uf"
                 }
             },
             {
                 "name": "naturezaOp",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.natope"
                 }
             },
@@ -650,21 +650,21 @@
             {
                 "name": "perfilDestino",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.PerfilDestino"
                 }
             },
             {
                 "name": "codigo_produto",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1[0].codclass"
                 }
             },
             {
                 "name": "origem_comercial",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -683,7 +683,7 @@
             {
                 "name": "grupo",
                 "smop": {
-                    "parm1": "{}pMy7tU2C : data{/}",
+                    "param1": "{}pMy7tU2C : data{/}",
                     "operation": "param1.grupo2"
                 }
             }
@@ -708,21 +708,21 @@
             {
                 "name": "ufOrigem",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.UF_ORIGEM"
                 }
             },
             {
                 "name": "ufDestino",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.uf"
                 }
             },
             {
                 "name": "naturezaOp",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.natope"
                 }
             },
@@ -733,21 +733,21 @@
             {
                 "name": "perfilDestino",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.PerfilDestino"
                 }
             },
             {
                 "name": "codigo_produto",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1[0].codclass"
                 }
             },
             {
                 "name": "origem_comercial",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -766,7 +766,7 @@
             {
                 "name": "grupo",
                 "smop": {
-                    "parm1": "{}pMy7tU2C : data{/}",
+                    "param1": "{}pMy7tU2C : data{/}",
                     "operation": "param1.grupo3"
                 }
             }
@@ -791,8 +791,8 @@
             {
                 "name": "variable1",
                 "smop": {
-                    "parm1": "{}DT7mtHhb : status{/}",
-                    "parm2": "{}YwUCJWju : status{/}",
+                    "param1": "{}DT7mtHhb : status{/}",
+                    "param2": "{}YwUCJWju : status{/}",
                     "operation": "param1 = null ? param2.cod_status : param1.cod_status"
                 }
             },
@@ -866,7 +866,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1.codclass"
                 }
             },
@@ -877,7 +877,7 @@
             {
                 "name": "p2_value",
                 "smop": {
-                    "parm1": "{}7kwlhTXu : element{/}",
+                    "param1": "{}7kwlhTXu : element{/}",
                     "operation": "param1.origem_comercial"
                 }
             },
@@ -888,7 +888,7 @@
             {
                 "name": "p3_value",
                 "smop": {
-                    "parm1": "{}ZlH6W71A : element{/}",
+                    "param1": "{}ZlH6W71A : element{/}",
                     "operation": "param1.UF_ORIGEM & \"-\" & param1.uf & \"-\" & param1.natope & \"-\" & param1.PerfilREMETENTE & \"-\" & param1.PerfilDestino"
                 }
             },
@@ -899,8 +899,8 @@
             {
                 "name": "p4_value",
                 "smop": {
-                    "parm1": "{}DT7mtHhb : status{/}",
-                    "parm2": "{}YwUCJWju : status{/}",
+                    "param1": "{}DT7mtHhb : status{/}",
+                    "param2": "{}YwUCJWju : status{/}",
                     "operation": "$string(param1 = null ? param2.cod_status : param1.cod_status)"
                 }
             },
@@ -911,8 +911,8 @@
             {
                 "name": "p5_value",
                 "smop": {
-                    "parm1": "{}DT7mtHhb : status{/}",
-                    "parm2": "{}YwUCJWju : status{/}",
+                    "param1": "{}DT7mtHhb : status{/}",
+                    "param2": "{}YwUCJWju : status{/}",
                     "operation": "$string(param1 = null ? param2.msg_status : param1.msg_status)"
                 }
             }
@@ -939,7 +939,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "[]qp6HfFFa : grupos[/]",
+                    "param1": "[]qp6HfFFa : grupos[/]",
                     "operation": "param1 + 1"
                 }
             }
@@ -988,7 +988,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "[]HwWjJhdJ : produtos[/]",
+                    "param1": "[]HwWjJhdJ : produtos[/]",
                     "operation": "param1 + 1"
                 }
             }
@@ -1066,7 +1066,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "{}RXvEixD6 : rows{/}",
+                    "param1": "{}RXvEixD6 : rows{/}",
                     "operation": "param1.codclass"
                 }
             }
@@ -1093,7 +1093,7 @@
             {
                 "name": "p1_value",
                 "smop": {
-                    "parm1": "[]tf0S5jkJ : offset_ncm[/]",
+                    "param1": "[]tf0S5jkJ : offset_ncm[/]",
                     "operation": "param1 + 1"
                 }
             }

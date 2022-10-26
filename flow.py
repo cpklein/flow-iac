@@ -3,9 +3,13 @@
 import json
 import os
 import re
+import copy
 
 DIRECTORY = '/Users/caio/Development/integra/flow/source'
 IAC_FILE = 'integration-002.json'
+
+# Execute remap
+REMAP = True
 
 def process_flow_01(module, modules, vectors, sequence_diagram):
     loops = []
@@ -97,8 +101,104 @@ def pre_process(modules):
         elif module ['type'] == "parameters":
             param_lines.append(process_flow_parms(module))
     # Extract duplicated elements
-    connectors = set(connectors)
+    connectors = list(set(connectors))
+    connectors = connectors[:1] + ['Integra'] + connectors[1:]
     return (connectors, vectors, param_lines)
+
+def remap(modules):
+    # Map for new Modules ID
+    id_map = { 'connector' : [],
+               'trigger' : [],
+               'tool' : [],
+               'parameter' : []
+               }
+    new_modules = []
+    # Build the mapping table
+    for module in modules:
+        build_id_table(module, id_map)
+    # Replace 
+    for module in modules:
+        replace_id_table(module, id_map, new_modules)
+    return (new_modules)
+        
+    #for each in id_map.keys():
+    #    print(each, "\t", id_map[each])
+
+def replace_id_table(module, id_map, new_modules):
+    # Append new module on the new list
+    n_mod = copy.deepcopy(module)
+    new_modules.append(n_mod)
+    if n_mod['type'] == 'parameters':
+        for parm in n_mod['parameters']:
+            match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.]+)[\{\[<]/[\]\}>]', parm['id'])
+            if match:
+                # Replace the id by the new ID mapped on id_map
+                parm['id'] = parm['id'].replace(match[1], id_map[match[1]])
+    else:
+        # Replace the module id
+        n_mod['module_id'] = id_map[n_mod['module_id']]
+        # Replace the parameters
+        for parm in n_mod['parameters']:
+            if 'value' in parm.keys():
+                if type(parm['value']) == str:
+                    # Search for the parameter format
+                    match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.]+)[\{\[<]/[\]\}>]', parm['value'])
+                    if match:
+                        old_id = match[1]
+                    # It may also be the whole string    
+                    elif parm['value'] in id_map.keys():
+                        old_id = parm['value']
+                    else:
+                        # There is nothing here: skip to next
+                        continue
+                    parm['value'] = parm['value'].replace(old_id, id_map[old_id])
+            if 'smop' in parm.keys():
+                for parmN in parm['smop'].keys():
+                    # We get also the operations in the loop but this shouldn't matter
+                    # Search for the parameter format
+                    match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.]+)[\{\[<]/[\]\}>]', parm['smop'][parmN])
+                    if match:
+                        old_id = match[1]
+                    # It may also be the whole string    
+                    elif parm['smop'][parmN] in id_map.keys():
+                        old_id = parm['smop'][parmN]
+                    else:
+                        # There is nothing here: skip to next
+                        continue
+                    parm['smop'][parmN] = parm['smop'][parmN].replace(old_id, id_map[old_id])
+                                        
+        # Replace the next-hop
+        for n_hop in n_mod['next']:
+            n_hop['id'] = id_map[n_hop['id']]
+
+def build_id_table(module, id_map):
+    # Choose the right name prefix and vector
+    if module['type'] == 'connector':
+        map_list = id_map['connector']
+        m_type = 'CN'
+    elif module['type'] == 'tool':
+        map_list = id_map['tool']
+        m_type = 'TL'
+    elif module['type'] == 'trigger':
+        map_list = id_map ['trigger']
+        m_type = 'TR'
+    elif module['type'] == 'parameters':
+        build_par_table(module['parameters'], id_map)
+        return
+    else:
+        # Return for flow parameters
+        return
+    # Create new entry on the module type
+    map_list.append(module['module_id'])
+    # Create a new mapping for the module
+    id_map[module['module_id']] = m_type + str(len(map_list)).zfill(3)
+    return
+
+def build_par_table(parameters, id_map):
+    for parm in parameters:
+        match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.]+)[\{\[<]/[\]\}>]', parm['id'])
+        id_map['parameter'].append(match[1])
+        id_map[match[1]] = 'PM' + str(len(id_map['parameter'])).zfill(3)
 
 def process_flow_parms(module):
     line = "note over Integra#lightgray:--**"
@@ -107,8 +207,9 @@ def process_flow_parms(module):
     # Walkthrough parameters
     for param in module['parameters']:
         id_name = re.search(r'\[\](\w+) : ([\w.]+)\[/\]', param['id'])
-        line = line + '**' + param['name'] + ' :** ' + ' [' + param['type'] + ']' 
-        line = line + '[' + id_name[1] + ']' + "\\n"
+        line = line + '** ' + param['name'] 
+        line = line + '""[' + id_name[1] + ']' 
+        line = line + ' :** ' + '[' + param['type'] + ']""' + "\\n"
         line = line + "    " + param['description'] + "\\n"
     return line
 
@@ -131,6 +232,7 @@ def process_trigger(module, sequence_diagram):
     line_base = line_base + module['information'] + "**\\n"            
     line = "abox right of Integra: --**"
     parameters = process_parameters(module['parameters'])
+    sequence_diagram.append('activate Integra')
     sequence_diagram.append(line + line_base + parameters)
 
 def process_tool(module, sequence_diagram):
@@ -181,15 +283,15 @@ def process_parameters(parameters):
     for parameter in parameters:
         if 'value' in parameter.keys():
             if type(parameter['value']) == str:   
-                line = '**' + parameter['name'] + ' :** ' + parameter['value']
+                line = '**' + parameter['name'] + ' :** ""' + parameter['value'] + '""' 
             elif type(parameter['value']) == list:
-                line = '**' + parameter['name'] + ' :** ' + ','.join(parameter['value'])
+                line = '**' + parameter['name'] + ' :** ""' + ','.join(parameter['value']) + '""'
             lines.append (line)
         elif 'smop' in parameter.keys():
             line = '**' + parameter['name'] + ' : SMOP**'
             lines.append (line)
             for key in parameter['smop'].keys():
-                line = '    **' + key + ' :** ' + parameter['smop'][key]
+                line = '    **' + key + ' :** ""' + parameter['smop'][key] + '""'
                 lines.append(line)
     return ('\\n'.join(lines))
             
@@ -202,7 +304,18 @@ if __name__ == "__main__":
     with open(iac_file, 'r') as mensagem:    
         data = mensagem.read()
     # parse file into dictionary
-    modules = json.loads(data)
+    source_modules = json.loads(data)
+    
+    modules = []
+    
+    
+    if REMAP:
+        # Remap IDs
+        cp_modules = copy.deepcopy(source_modules)
+        modules = remap(cp_modules)
+    else:
+        modules = copy.deepcopy(source_modules)
+    
     connectors, vectors, param_lines = pre_process(modules)
     sequence_diagram = []
     for module in modules:
@@ -211,9 +324,10 @@ if __name__ == "__main__":
     process_flow_01(module, modules, vectors, sequence_diagram)
     for connector in connectors:
         print ("participant", connector)
-    print ("participant", "Integra")
+
     for line in param_lines:
         print (line)
     for line in sequence_diagram:
         print (line)
+    
     
