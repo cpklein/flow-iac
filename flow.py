@@ -1,17 +1,24 @@
-# Generate text file to be used by Sequence Diagram 
+# Generate text file for Sequence Diagram 
+
+# Files and directory
+DIRECTORY = '/Users/caio/Development/integra/flow/source'
+IAC_FILE = 'integration-003.json'
+OUT_FILE = 'sequence_diagram.txt'
+
+# Execute remap
+REMAP = True
 
 import json
 import os
 import re
 import copy
+import sys
 
-DIRECTORY = '/Users/caio/Development/integra/flow/source'
-IAC_FILE = 'integration-002.json'
-
-# Execute remap
-REMAP = True
-
-def process_flow_01(module, modules, vectors, sequence_diagram):
+# Goes through the whole flow path. Starts with the trigger and follows the 
+# "next" path. When next has multiple hops, recall the process_flow for each
+# branch. Returns happens in the following circunstances: 1) convergence module,
+# when a module is reached by multiple vectors. 2) loop endings 3) dead ends
+def process_flow(module, modules, vectors, sequence_diagram):
     loops = []
     # Keep processing while there is next_hop
     while True:
@@ -27,38 +34,51 @@ def process_flow_01(module, modules, vectors, sequence_diagram):
                 # loops were empty which means do/for was opened on an outside branch
                 # Return itself
                 return [module]
-        # Process the module
+        # Process the module. Each type has an specific processing function
         if module['type'] == "trigger":
             process_trigger(module, sequence_diagram)
         elif module['type'] == "tool":
             process_tool(module, sequence_diagram)
         elif module['type'] == "connector":
             process_connector(module, sequence_diagram)
-        
+
+        # Deal with multiple next hops
         if len(module['next']) > 1:
+            # We deal with the IF statement on the process_tool() 
+            if module['subtype'] != 'if':
+                # When multiple vectors are originated from one module
+                sequence_diagram.append("par Parallel Execution" )
+            # joint_next keeps track of the expected convergence module
             joint_next = []
+            # Counter is just to keep track of the multiple threads for parallel exec
+            counter = 1
             #For each next hop
             for next_module in module['next']:
-                #Find the module 
+                #Find the module. We need information about it.
                 for n_mod in modules:
                     if n_mod['module_id'] == next_module['id']:
                         break
-                # Check if next_hop is a joint/end loop so we must
-                # process alternative path 
+                # Check if next_hop is already the joint/end loop so there is nothing to do
                 if (len(vectors[n_mod['module_id']]) > 1):
                     joint_next.append(n_mod)
-                # Start over from there
+                # If there are more modules, start over the process_flow from there
                 else:
+                    # Find which type of branch cames next
                     if next_module['type'] == 'true':
                         # Next module will be on the TRUE path
                         sequence_diagram.append('else TRUE')
                     elif next_module['type'] == 'false':
                         # Next module will be on the FALSE path
                         sequence_diagram.append('else FALSE')
-                    joint_next.extend(process_flow_01(n_mod,
-                                                      modules,
-                                                      vectors,
-                                                      sequence_diagram))
+                    else:
+                        sequence_diagram.append('thread Path' + str(counter) )
+                    # Call (recurrently) the process flow for the new branch
+                    # Stores the next-hop on the end of each branch (they should be the same)
+                    joint_next.extend(process_flow(n_mod,
+                                                   modules,
+                                                   vectors,
+                                                   sequence_diagram))
+                    counter = counter + 1
             # joint_next may have multiple copies of next_hop
             cons = [mod["module_id"] for mod in joint_next]
             consolidated = set(cons)
@@ -77,8 +97,10 @@ def process_flow_01(module, modules, vectors, sequence_diagram):
             for n_mod in modules:
                 if n_mod['module_id'] == module['next'][0]['id']:
                     break
+            # If the next module is a convergence from multiple modules then return
             if len(vectors[n_mod['module_id']]) > 1:
                 return [n_mod]
+            # Else, move to the next module on the branch
             module = n_mod
         # We have reached the end
         elif (not module['next']):          
@@ -87,26 +109,32 @@ def process_flow_01(module, modules, vectors, sequence_diagram):
         
 
 def pre_process(modules):
-    # Header Lines
+    # Header Lines for Participants 
     connectors = []
     # Flow parameter lines
     param_lines = []
-    # vectors
+    # vectors: dictionary with all nodes and a list of previous nodes for each one
+    # this allows to check for nodes that converge mutiple branches
     vectors = {}
-    # Process Modules
+    # Pre_Process Modules
     for module in modules:
         update_vectors(module, vectors)
         if module['type'] == "connector":
+            # Each connector module is a participant
             connectors.append (module['name'])
         elif module ['type'] == "parameters":
+            # Process the Flow Parameters
             param_lines.append(process_flow_parms(module))
-    # Extract duplicated elements
+    # Extract duplicated elements 
     connectors = list(set(connectors))
+    # Put Integra as the second participant
     connectors = connectors[:1] + ['Integra'] + connectors[1:]
     return (connectors, vectors, param_lines)
 
 def remap(modules):
     # Map for new Modules ID
+    # lists below keep track of the ids and their order
+    # id_map is also populated with each original ID and its corresponding new ID 
     id_map = { 'connector' : [],
                'trigger' : [],
                'tool' : [],
@@ -116,7 +144,7 @@ def remap(modules):
     # Build the mapping table
     for module in modules:
         build_id_table(module, id_map)
-    # Replace 
+    # Replace
     for module in modules:
         replace_id_table(module, id_map, new_modules)
     return (new_modules)
@@ -172,7 +200,7 @@ def replace_id_table(module, id_map, new_modules):
             n_hop['id'] = id_map[n_hop['id']]
 
 def build_id_table(module, id_map):
-    # Choose the right name prefix and vector
+    # Choose the right name prefix and vector according to module type
     if module['type'] == 'connector':
         map_list = id_map['connector']
         m_type = 'CN'
@@ -183,21 +211,25 @@ def build_id_table(module, id_map):
         map_list = id_map ['trigger']
         m_type = 'TR'
     elif module['type'] == 'parameters':
+        # Parameters are processed differently and immediately returned
         build_par_table(module['parameters'], id_map)
         return
     else:
-        # Return for flow parameters
+        # should never get here
         return
     # Create new entry on the module type
     map_list.append(module['module_id'])
-    # Create a new mapping for the module
+    # Create a new mapping for the module with a sequential name for its type
     id_map[module['module_id']] = m_type + str(len(map_list)).zfill(3)
     return
 
 def build_par_table(parameters, id_map):
     for parm in parameters:
+        # Search for parameters in the form []id : name[/] 
         match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.]+)[\{\[<]/[\]\}>]', parm['id'])
+        # add parameter to id_map list of its type
         id_map['parameter'].append(match[1])
+        # Create a new entry on id_map with a sequential name for its type
         id_map[match[1]] = 'PM' + str(len(id_map['parameter'])).zfill(3)
 
 def process_flow_parms(module):
@@ -237,7 +269,7 @@ def process_trigger(module, sequence_diagram):
 
 def process_tool(module, sequence_diagram):
     # Process parameters
-    # Commum lines of information
+    # lines of information - valid for all types 
     line_base =  module['name'] + " [" + module['module_id'] + ']' + "\\n"
     line_base = line_base + module['information'] + "**\\n"        
     parameters = process_parameters(module['parameters'])
@@ -255,7 +287,7 @@ def process_tool(module, sequence_diagram):
         sequence_diagram.append(line + line_base + parameters)
         sequence_diagram.append("end" )
     elif (module['subtype'] == 'if'):
-        sequence_diagram.append("alt" )
+        sequence_diagram.append("alt IF" )
         line = "note over Integra#lightgray:--**"
         sequence_diagram.append(line + line_base + parameters)
     else:
@@ -306,28 +338,38 @@ if __name__ == "__main__":
     # parse file into dictionary
     source_modules = json.loads(data)
     
-    modules = []
-    
-    
+    modules = []    
+    # Replace the original IDs by sequencial mneumonics
     if REMAP:
         # Remap IDs
         cp_modules = copy.deepcopy(source_modules)
         modules = remap(cp_modules)
     else:
         modules = copy.deepcopy(source_modules)
-    
+    # pre_process returns:
+    # connectors -> Participants of the sequence diagram
+    # vectors -> The vectors on the reverse order. Allows us to find convergence modules
+    # param_lines -> Lines for the Flow parameters block 
     connectors, vectors, param_lines = pre_process(modules)
+    # sequence_diagram is the repository where we write all the sequence diagram lines
     sequence_diagram = []
+    # Everything start with the trigger. Find it!
     for module in modules:
         if module['type'] == 'trigger':
             break
-    process_flow_01(module, modules, vectors, sequence_diagram)
-    for connector in connectors:
-        print ("participant", connector)
+    # Do the work
+    process_flow(module, modules, vectors, sequence_diagram)
+    # Prepare for printing
+    original_stdout = sys.stdout # Save a reference to the original standard output
+    sd_file = os.path.join(DIRECTORY, OUT_FILE)
+    with open(sd_file, 'w') as out:
+        sys.stdout = out # Change the standard output to the file we created.
+        # Actual printing to file    
+        for connector in connectors:
+            print ("participant", connector)
 
-    for line in param_lines:
-        print (line)
-    for line in sequence_diagram:
-        print (line)
-    
-    
+        for line in param_lines:
+            print (line)
+        for line in sequence_diagram:
+            print (line)
+    sys.stdout = original_stdout # Reset the standard output to its original value    

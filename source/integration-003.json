@@ -270,6 +270,78 @@
         "next": []
     },
     {
+        "module_id": "XXXHDyBA",
+        "name": "Log",
+        "information": "Gera notificação de ERRO",
+        "type": "tool",
+        "subtype": "log",
+        "description": "Log Module",
+        "parameters": [
+            {
+                "name": "target",
+                "value": [
+                    "local"
+                ]
+            },
+            {
+                "name": "contents",
+                "value": [
+                    "flow_id",
+                    "execution",
+                    "severity",
+                    "timestamp"
+                ]
+            },
+            {
+                "name": "severity",
+                "value": "warning"
+            },
+            {
+                "name": "timestamp",
+                "value": "[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]"
+            },
+            {
+                "name": "p1_name",
+                "value": ""
+            },
+            {
+                "name": "p1_value",
+                "smop": {
+                    "param1": "{}Ks5OwZyi : status{/}",
+                    "operation": "\"error:\"&param1.cod_status"
+                }
+            },
+            {
+                "name": "p2_name",
+                "value": ""
+            },
+            {
+                "name": "p2_value",
+                "smop": {
+                    "param1": "{}Ks5OwZyi : status{/}",
+                    "operation": "\"msg:\"&param1.msg_status"
+                }
+            },
+            {
+                "name": "p3_name",
+                "value": ""
+            },
+            {
+                "name": "p3_value",
+                "smop": {
+                    "param1": "{}Ks5OwZyi : ponteiro_atualizacao{/}",
+                    "operation": "\"ponteiro:\"&param1"
+                }
+            }
+        ],
+        "next": [
+            {
+                "type": "single",
+                "id": "hV8SqOOw"
+            }
+        ]
+    },
+    {
         "module_id": "AJMvuMCB",
         "name": "Transformation",
         "information": "Monta JSON para inserção em DB MSSQL",
@@ -288,9 +360,14 @@
         ],
         "next": [
             {
-                "type": "single",
+                "type": "multiple",
                 "id": "iiHS2yIH"
+            },
+            {
+                "type": "multiple",
+                "id": "XXXHDyBA"
             }
+
         ]
     },
     {

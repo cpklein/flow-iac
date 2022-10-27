@@ -1,0 +1,31 @@
+participant Systax
+participant Integra
+participant Khan
+note over Integra#lightgray:--**Flow Parameters [flow]\nFlow parameters definition**\n** origem""[PM001] :** [number]""\n    Origem do Produto\n** id_cenario""[PM002] :** [string]""\n    ID de cenário\n** counter_regras""[PM003] :** [number]""\n    Contador de regras atualizadas\n** codigo_produto""[PM004] :** [string]""\n    Código de Produto (NCM)\n** senha""[PM005] :** [string]""\n    Senha usuário Systax\n** pagina""[PM006] :** [number]""\n    Tamanho de página de leitura\n** ponteiro""[PM007] :** [string]""\n    Ponteiro Temporal Systax\n** novo_ponteiro""[PM008] :** [string]""\n    Novo Ponteiro Temporal Systax\n** usuario""[PM009] :** [string]""\n    Usuário Systax\n
+activate Integra
+abox right of Integra: --**Time Trigger [TR001]\nAcionamento 1x ao dia**\n**frequency :** ""1-day""\n**time :** ""01:00:00""\n**next :** ""2022:12:31:23:59:59""
+group DO
+Integra->Systax:--**Systax [CN001]\nLeitura de regras atualizadas pela Systax**\n**ponteiro_atualizacao :** ""[]PM007 : ponteiro[/]""\n**id_cenario :** ""[]PM002 : id_cenario[/]""\n**codigo_produto :** ""[]PM004 : codigo_produto[/]""\n**username :** ""[]PM009 : usuario[/]""\n**senha :** ""[]PM005 : senha[/]""\n**origem :** ""0""\n**pagina :** ""[]PM006 : pagina[/]""
+activate Systax
+Systax->Integra:--**RESPONSE**
+deactivate Systax
+alt IF
+note over Integra#lightgray:--**IF [TL002]\nSe operacao anterior obteve sucesso (200)**\n**variable1 : SMOP**\n    **param1 :** ""{}CN001 : responseHeader{/}""\n    **operation :** ""param1.status""\n**variable2 :** ""200""\n**condition :** ""==""
+else TRUE
+rbox over Integra: --**Transformation [TL005]\nMonta JSON para inserção em DB MSSQL**\n**data :** ""DATA""\n**jsonata :** ""jsonata code""
+par Parallel Execution
+thread Path1
+Integra->Khan:--**Khan [CN002]\nSalva Regras no DB**\n**array_regras : SMOP**\n    **param1 :** ""{}TL005 : data{/}""\n    **operation :** ""param1.prod_count = 0 ? [] : param1.regras""
+activate Khan
+Khan->Integra:--**RESPONSE**
+deactivate Khan
+rbox over Integra: --**Update Parameters [TL006]\nAtualiza informações dentro do loop**\n**p1_name :** ""[]PM001 : origem[/]""\n**p1_value :** ""{}TL005 : data.last_origem{/}""\n**p2_name :** ""[]PM002 : id_cenario[/]""\n**p2_value :** ""{}TL005 : data.last_id_cenario{/}""\n**p3_name :** ""[]PM003 : counter_regras[/]""\n**p3_value : SMOP**\n    **param1 :** ""{}TL005 : data{/}""\n    **param2 :** ""[]PM003 : counter_regras[/]""\n    **operation :** ""param1.prod_count + param2""\n**p4_name :** ""[]PM004 : codigo_produto[/]""\n**p4_value :** ""{}TL005 : data.last_cod_prod{/}""\n**p5_name :** ""[]PM008 : novo_ponteiro[/]""\n**p5_value : SMOP**\n    **param1 :** ""{}TL001 : loopCount{/}""\n    **param2 :** ""[]PM008 : novo_ponteiro[/]""\n    **param3 :** ""{}CN001 : ponteiro_atualizacao{/}""\n    **operation :** ""param1 = 0 ? param3 : param2""
+thread Path2
+rbox over Integra: --**Log [TL004]\nGera notificação de ERRO**\n**target :** ""local""\n**contents :** ""flow_id,execution,severity,timestamp""\n**severity :** ""warning""\n**timestamp :** ""[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]""\n**p1_name :** """"\n**p1_value : SMOP**\n    **param1 :** ""{}CN001 : status{/}""\n    **operation :** """error:"&param1.cod_status""\n**p2_name :** """"\n**p2_value : SMOP**\n    **param1 :** ""{}CN001 : status{/}""\n    **operation :** """msg:"&param1.msg_status""\n**p3_name :** """"\n**p3_value : SMOP**\n    **param1 :** ""{}CN001 : ponteiro_atualizacao{/}""\n    **operation :** """ponteiro:"&param1""
+end
+else FALSE
+rbox over Integra: --**Log [TL003]\nGera notificação de ERRO**\n**target :** ""local""\n**contents :** ""flow_id,execution,severity,timestamp""\n**severity :** ""warning""\n**timestamp :** ""[Y0001]-[M01]-[D01] [H01]:[m01]:[s01]""\n**p1_name :** """"\n**p1_value : SMOP**\n    **param1 :** ""{}CN001 : status{/}""\n    **operation :** """error:"&param1.cod_status""\n**p2_name :** """"\n**p2_value : SMOP**\n    **param1 :** ""{}CN001 : status{/}""\n    **operation :** """msg:"&param1.msg_status""\n**p3_name :** """"\n**p3_value : SMOP**\n    **param1 :** ""{}CN001 : ponteiro_atualizacao{/}""\n    **operation :** """ponteiro:"&param1""
+end
+note over Integra#lightgray:--**WHILE [TL007]\ndo while rows from database == page (enquanto pagina de retorno de regras estiver cheia)**\n**start :** ""TL001""\n**variable1 :** ""{}TL005 : data.prod_count{/}""\n**variable2 :** ""[]PM006 : pagina[/]""\n**condition :** ""==""
+end
+rbox over Integra: --**Update Parameters [TL008]\nAtualiza informações para a próxima execução**\n**p1_name :** ""[]PM001 : origem[/]""\n**p1_value :** ""0""\n**p2_name :** ""[]PM002 : id_cenario[/]""\n**p2_value :** ""1""\n**p3_name :** ""[]PM004 : codigo_produto[/]""\n**p3_value :** ""1""\n**p4_name :** ""[]PM007 : ponteiro[/]""\n**p4_value :** ""[]PM008 : novo_ponteiro[/]""
