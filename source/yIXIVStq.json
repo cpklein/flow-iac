@@ -1,0 +1,123 @@
+[
+  {
+    "module_id": "parameters",
+    "name": "context Parameters",
+    "information": "context parameters definition",
+    "type": "parameters",
+    "subtype": "context",
+    "operation": "none",
+    "description": "context parameters definition",
+    "parameters": [
+      {
+        "name": "location",
+        "id": "[]teahlyW9 : location[/]",
+        "type": "string",
+        "description": "Locatioon",
+        "sample": "Sao Paulo"
+      },
+      {
+        "name": "key_",
+        "id": "[]0aHQDrFT : key_[/]",
+        "type": "string",
+        "description": "Key API",
+        "sample": "1f4efae6326c4e04a81140559220607"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "Reh8qnkD",
+    "name": "API_GATEWAY_TRIGGER",
+    "information": "Request containing the userid and number n of samples",
+    "type": "trigger",
+    "subtype": "api",
+    "operation": "api-gateway",
+    "description": "Trigger api-gateway for flow 8ZxN7gyU",
+    "parameters": [
+      {
+        "name": "apiGatewayId",
+        "value": "BxgN4lie"
+      },
+      {
+        "name": "apiGatewayVersionId",
+        "value": "1UOvIjzJ"
+      },
+      {
+        "name": "apiGatewayPathId",
+        "value": "OLEOQ2yJ"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "NHS2IX90"
+      }
+    ]
+  },
+  {
+    "module_id": "YhB0XMyK",
+    "name": "My Database",
+    "information": "Retrieve information from the database",
+    "type": "connector",
+    "subtype": "database",
+    "operation": "Get last N measures",
+    "description": "PostgresSQL Database",
+    "parameters": [
+      {
+        "name": "n",
+        "value": "{}Reh8qnkD : query.n{/}"
+      }
+    ],
+    "origin": "j4O1kheq",
+    "next": [
+      {
+        "type": "single",
+        "id": "hdtZumrC"
+      }
+    ]
+  },
+  {
+    "module_id": "hdtZumrC",
+    "name": "Return",
+    "information": "Return samples and avarage temperature and humidity",
+    "type": "tool",
+    "subtype": "RETURN",
+    "operation": "RETURN",
+    "description": "Retorna os dados de uma requisição",
+    "parameters": [
+      {
+        "name": "data",
+        "value": "{}YhB0XMyK : rows{/}"
+      },
+      {
+        "name": "jsonata",
+        "value": "{\\n    \"total\" : $count(result),\\n    \"average_temp\" : $average(result.temp_celsius.$number()),\\n    \"average_humidity\" : $average(result.humidity.$number()),\\n    \"samples\" : result\\n}"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "NHS2IX90",
+    "name": "Context Finder",
+    "information": "Find the context",
+    "type": "tool",
+    "subtype": "context_finder",
+    "operation": "CONTEXT_FINDER",
+    "description": "Configura qual parâmetro de fluxo deve ser utilizado para encontrar o contexto especificado em tempo de execução",
+    "parameters": [
+      {
+        "name": "parameter",
+        "value": "{}Reh8qnkD : query.userid{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "YhB0XMyK"
+      }
+    ]
+  }
+]

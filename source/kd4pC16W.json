@@ -1,0 +1,270 @@
+[
+  {
+    "module_id": "parameters",
+    "name": "flow Parameters",
+    "information": "flow parameters definition",
+    "type": "parameters",
+    "subtype": "flow",
+    "operation": "none",
+    "description": "flow parameters definition",
+    "parameters": [
+      {
+        "name": "userid",
+        "id": "[]wU3RF26U : userid[/]",
+        "type": "string",
+        "description": "User ID",
+        "sample": "0001"
+      },
+      {
+        "name": "userid_list",
+        "id": "[]Asj0oolV : userid_list[/]",
+        "type": "array",
+        "description": "List of User ID Keys",
+        "sample": "[\n    \"0001\",\n    \"0002\",\n    \"0003\"\n    ]"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "parameters",
+    "name": "context Parameters",
+    "information": "context parameters definition",
+    "type": "parameters",
+    "subtype": "context",
+    "operation": "none",
+    "description": "context parameters definition",
+    "parameters": [
+      {
+        "name": "location",
+        "id": "[]T89Ajrea : location[/]",
+        "type": "string",
+        "description": "Location",
+        "sample": "Sao Paulo"
+      },
+      {
+        "name": "key_",
+        "id": "[]nFhiBhBk : key_[/]",
+        "type": "string",
+        "description": "Weather API Key",
+        "sample": "1f4efae6326c4e04a81140559220607"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "gU2Beigx",
+    "name": "TIME_TRIGGER",
+    "information": "Run every 15 minutes",
+    "type": "trigger",
+    "subtype": "timer",
+    "operation": "repeat",
+    "description": "Trigger repeat for flow AahqNX1A",
+    "parameters": [
+      {
+        "name": "start",
+        "value": "2022-07-15T15:00:49.000Z"
+      },
+      {
+        "name": "end",
+        "value": ""
+      },
+      {
+        "name": "frequency",
+        "value": "every"
+      },
+      {
+        "name": "time",
+        "value": "15 minute"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "0G2ItjZD"
+      }
+    ]
+  },
+  {
+    "module_id": "mv7rcZIw",
+    "name": "Weather API",
+    "information": "Retrieve the current weather information of the context",
+    "type": "connector",
+    "subtype": "REST",
+    "operation": "GET",
+    "description": "Access weather information all around the world",
+    "parameters": [
+      {
+        "name": "location",
+        "value": "[]T89Ajrea : location[/]"
+      },
+      {
+        "name": "key",
+        "value": "[]nFhiBhBk : key_[/]"
+      }
+    ],
+    "origin": "eyChPkMp",
+    "next": [
+      {
+        "type": "single",
+        "id": "kIFcCvKq"
+      }
+    ]
+  },
+  {
+    "module_id": "kIFcCvKq",
+    "name": "My Database",
+    "information": "Insert weather information on the context database",
+    "type": "connector",
+    "subtype": "database",
+    "operation": "INSERT weather information",
+    "description": "PostgresSQL Database",
+    "parameters": [
+      {
+        "name": "location",
+        "value": "{}mv7rcZIw : location.name{/}"
+      },
+      {
+        "name": "region",
+        "value": "{}mv7rcZIw : location.region{/}"
+      },
+      {
+        "name": "country",
+        "value": "{}mv7rcZIw : location.country{/}"
+      },
+      {
+        "name": "temp_celsius",
+        "value": "{}mv7rcZIw : current.temp_c{/}"
+      },
+      {
+        "name": "humidity",
+        "value": "{}mv7rcZIw : current.humidity{/}"
+      },
+      {
+        "name": "condition",
+        "smop": {
+          "operation": "param1.condition.text",
+          "param1": "{}mv7rcZIw : current{/}"
+        }
+      },
+      {
+        "name": "local_time",
+        "value": "{}mv7rcZIw : location.localtime{/}"
+      }
+    ],
+    "origin": "j4O1kheq",
+    "next": [
+      {
+        "type": "single",
+        "id": "6mXprcnH"
+      }
+    ]
+  },
+  {
+    "module_id": "0G2ItjZD",
+    "name": "For",
+    "information": "Execute once for each context",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "start",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "loopCounter",
+        "value": "{}0G2ItjZD : loopCounter{/}"
+      },
+      {
+        "name": "forEndId",
+        "value": "UKlgPJef"
+      },
+      {
+        "name": "restartLoopCounter",
+        "value": "{}UKlgPJef : restartLoopCounter{/}"
+      },
+      {
+        "name": "array",
+        "value": "[]Asj0oolV : userid_list[/]"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "8JyfjJDM"
+      }
+    ]
+  },
+  {
+    "module_id": "UKlgPJef",
+    "name": "For",
+    "information": "End loop",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "end",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "forBeginId",
+        "value": "0G2ItjZD"
+      },
+      {
+        "name": "arrayLength",
+        "value": "{}0G2ItjZD : arrayLength{/}"
+      },
+      {
+        "name": "loopCounter",
+        "value": "{}0G2ItjZD : loopCounter{/}"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "8JyfjJDM",
+    "name": "Context Finder",
+    "information": "Finde the context",
+    "type": "tool",
+    "subtype": "context_finder",
+    "operation": "CONTEXT_FINDER",
+    "description": "Configura qual parâmetro de fluxo deve ser utilizado para encontrar o contexto especificado em tempo de execução",
+    "parameters": [
+      {
+        "name": "parameter",
+        "value": "{}0G2ItjZD : element{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "mv7rcZIw"
+      }
+    ]
+  },
+  {
+    "module_id": "6mXprcnH",
+    "name": "Log",
+    "information": "Log event",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "value": "{}0G2ItjZD : element{/}"
+      },
+      {
+        "name": "param2",
+        "value": "{}mv7rcZIw : location.name{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "UKlgPJef"
+      }
+    ]
+  }
+]

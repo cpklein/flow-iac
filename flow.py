@@ -2,7 +2,7 @@
 
 # Files and directory
 DIRECTORY = '/Users/caio/Development/integra/flow/source'
-IAC_FILE = 'integration-003.json'
+IAC_FILE = 'kd4pC16W.json'
 OUT_FILE = 'sequence_diagram.txt'
 
 # Execute remap
@@ -261,12 +261,17 @@ def update_vectors(module, vectors):
 
 def process_trigger(module, sequence_diagram):
     line_base =  module['name'] + " [" + module['module_id'] + ']' + "\\n"
-    line_base = line_base + module['information'] + "**\\n"            
-    line = "abox right of Integra: --**"
+    line_base = line_base + module['information'] + "**\\n"
+    if module['subtype'] == 'api':
+        line = "Client->Integra: --**"
+    elif module['subtype'] == 'webhook':
+        line = "]->Integra: --**"
+    else:
+        line = "abox right of Integra: --**"
     parameters = process_parameters(module['parameters'])
-    sequence_diagram.append('activate Integra')
     sequence_diagram.append(line + line_base + parameters)
-
+    sequence_diagram.append('activate Integra')
+    
 def process_tool(module, sequence_diagram):
     # Process parameters
     # lines of information - valid for all types 
@@ -290,6 +295,21 @@ def process_tool(module, sequence_diagram):
         sequence_diagram.append("alt IF" )
         line = "note over Integra#lightgray:--**"
         sequence_diagram.append(line + line_base + parameters)
+    elif (module['subtype'] == 'RETURN'):
+        line = "rbox over Integra: --**" 
+        sequence_diagram.append(line + line_base + parameters)
+        sequence_diagram.append("expandable+ #lightgray --JSONATA Expression **[click to expand]" )
+        jsonata_exp = process_jsonata(module['parameters'])
+        sequence_diagram.append(line + jsonata_exp)
+        sequence_diagram.append("end" )
+        sequence_diagram.append("Integra->Client: --**RESPONSE" )
+    elif (module['subtype'] == 'transform'):
+        line = "rbox over Integra: --**" 
+        sequence_diagram.append(line + line_base + parameters)
+        sequence_diagram.append("expandable+ #lightgray --JSONATA Expression **[click to expand]" )
+        jsonata_exp = process_jsonata(module['parameters'])
+        sequence_diagram.append(line + jsonata_exp)
+        sequence_diagram.append("end" )
     else:
         line = "rbox over Integra: --**" 
         sequence_diagram.append(line + line_base + parameters)
@@ -314,8 +334,14 @@ def process_parameters(parameters):
     lines = []
     for parameter in parameters:
         if 'value' in parameter.keys():
-            if type(parameter['value']) == str:   
-                line = '**' + parameter['name'] + ' :** ""' + parameter['value'] + '""' 
+            if type(parameter['value']) == str:
+                # jsonata is handled separately
+                if parameter['name'] == 'jsonata':
+                    line = '**' + parameter['name'] + ' :** ""' + '[jsonata expression bellow]' + '""'
+                else:
+                    # \n breaks display. Replace by \\n
+                    parameter['value'] = parameter['value'].replace('\n', '\\n')
+                    line = '**' + parameter['name'] + ' :** ""' + parameter['value'] + '""' 
             elif type(parameter['value']) == list:
                 line = '**' + parameter['name'] + ' :** ""' + ','.join(parameter['value']) + '""'
             lines.append (line)
@@ -327,6 +353,17 @@ def process_parameters(parameters):
                 lines.append(line)
     return ('\\n'.join(lines))
             
+def process_jsonata(parameters):
+    lines = []
+    for parameter in parameters:
+        # find the jsonata parameter 
+        # (we may have a problem is the user creates a parameter called jsonata)
+        if parameter['name'] == 'jsonata':
+            # \n breaks display. Replace by \\n
+            parameter['value'] = parameter['value'].replace('\n', '\\n')
+            line = parameter['name'] + ' :** ""' + parameter['value'] + '""' 
+            lines.append(line)
+    return ('\\n'.join(lines))
 
 
 # For local test
