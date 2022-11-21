@@ -1,20 +1,54 @@
-participant My Database
+participant SAP PANASONIC
 participant Integra
-participant Weather API
-note over Integra#lightgray:--**flow Parameters [flow]\nflow parameters definition**\n** userid""[PM001] :** [string]""\n    User ID\n** userid_list""[PM002] :** [array]""\n    List of User ID Keys\n
-note over Integra#lightgray:--**context Parameters [context]\ncontext parameters definition**\n** location""[PM003] :** [string]""\n    Location\n** key_""[PM004] :** [string]""\n    Weather API Key\n
-abox right of Integra: --**TIME_TRIGGER [TR001]\nRun every 15 minutes**\n**start :** ""2022-07-15T15:00:49.000Z""\n**end :** """"\n**frequency :** ""every""\n**time :** ""15 minute""
+participant VTEX PANASONIC
+note over Integra#lightgray:--**flow Parameters [flow]\nflow parameters definition**\n** page""[PM001] :** [number]""\n    page\n** X-VTEX-API-AppKey""[AEqzX7wq] :** [string]""\n    X-VTEX-API-AppKey\n** X-VTEX-API-AppToken""[kKYNCbEI] :** [string]""\n    X-VTEX-API-AppToken\n** estoque""[PM004] :** [array]""\n    estoque\n** EMPRESA""[PM005] :** [string]""\n    EMPRESA\n** CIDADE""[PM006] :** [string]""\n    CIDADE\n
+abox right of Integra: --**TIME_TRIGGER [TR001]\nTIME_TRIGGER_DESC**\n**start :** ""Fri Jun 10 2022 17:29:30 GMT-0300""\n**end :** ""Fri Jun 10 2022 17:29:30 GMT-0300""\n**frequency :** ""every""\n**time :** ""30 second""
 activate Integra
+group DO
+Integra->VTEX PANASONIC:--**VTEX PANASONIC [CN001]\nVTEC PANASONIC**\n**page :** ""[]PM001 : page[/]""\n**X-VTEX-API-AppKey :** ""[]AEqzX7wq : X-VTEX-API-AppKey[/]""\n**X-VTEX-API-AppToken :** ""[]kKYNCbEI : X-VTEX-API-AppToken[/]""
+activate VTEX PANASONIC
+VTEX PANASONIC->Integra:--**RESPONSE**
+deactivate VTEX PANASONIC
 group FOR
-note over Integra#lightgray:--**For [TL001]\nExecute once for each context**\n**loopCounter :** ""{}TL001 : loopCounter{/}""\n**forEndId :** ""TL002""\n**restartLoopCounter :** ""{}TL002 : restartLoopCounter{/}""\n**array :** ""[]PM002 : userid_list[/]""
-rbox over Integra: --**Context Finder [TL003]\nFinde the context**\n**parameter :** ""{}TL001 : element{/}""
-Integra->Weather API:--**Weather API [CN001]\nRetrieve the current weather information of the context**\n**location :** ""[]PM003 : location[/]""\n**key :** ""[]PM004 : key_[/]""
-activate Weather API
-Weather API->Integra:--**RESPONSE**
-deactivate Weather API
-Integra->My Database:--**My Database [CN002]\nInsert weather information on the context database**\n**location :** ""{}CN001 : location.name{/}""\n**region :** ""{}CN001 : location.region{/}""\n**country :** ""{}CN001 : location.country{/}""\n**temp_celsius :** ""{}CN001 : current.temp_c{/}""\n**humidity :** ""{}CN001 : current.humidity{/}""\n**condition : SMOP**\n    **operation :** ""param1.condition.text""\n    **param1 :** ""{}CN001 : current{/}""\n**local_time :** ""{}CN001 : location.localtime{/}""
-activate My Database
-My Database->Integra:--**RESPONSE**
-deactivate My Database
-rbox over Integra: --**Log [TL004]\nLog event**\n**param1 :** ""{}TL001 : element{/}""\n**param2 :** ""{}CN001 : location.name{/}""
+note over Integra#lightgray:--**For [TL002]\nExecuta um loop com base em uma lista**\n**loopCounter :** ""{}TL002 : loopCounter{/}""\n**forEndId :** ""TL007""\n**restartLoopCounter :** ""{}TL007 : restartLoopCounter{/}""\n**array :** ""{}CN001 : list{/}""
+Integra->VTEX PANASONIC:--**VTEX PANASONIC [CN002]\nVTEC PANASONIC**\n**OrderId : SMOP**\n    **operation :** ""param1.orderId""\n    **param1 :** ""{}TL002 : element{/}""\n**X-VTEX-API-AppKey :** ""[]AEqzX7wq : X-VTEX-API-AppKey[/]""\n**X-VTEX-API-AppToken :** ""[]kKYNCbEI : X-VTEX-API-AppToken[/]""
+activate VTEX PANASONIC
+VTEX PANASONIC->Integra:--**RESPONSE**
+deactivate VTEX PANASONIC
+rbox over Integra: --**Data Transformation [TL003]\nMódulo para fazer transformação de dados**\n**jsonata :** ""[jsonata expression bellow]""\n**data :** ""{}CN002 : items{/}""
+expandable+ #lightgray --JSONATA Expression **[click to expand]
+rbox over Integra: --**jsonata :** ""result.components""
 end
+group FOR
+note over Integra#lightgray:--**For [TL004]\nExecuta um loop com base em uma lista**\n**loopCounter :** ""{}TL004 : loopCounter{/}""\n**forEndId :** ""TL006""\n**restartLoopCounter :** ""{}TL006 : restartLoopCounter{/}""\n**array :** ""{}CN002 : items{/}""
+Integra->SAP PANASONIC:--**SAP PANASONIC [CN004]\nSAP PANASONIC**\n**CODIGOPRODUTO : SMOP**\n    **operation :** ""param1.refId""\n    **param1 :** ""{}TL004 : element{/}""\n**EMPRESA :** ""[]PM005 : EMPRESA[/]""
+activate SAP PANASONIC
+SAP PANASONIC->Integra:--**RESPONSE**
+deactivate SAP PANASONIC
+rbox over Integra: --**Log [TL005]\nLogar eventos**\n**param1 :** ""{}CN004 : body{/}""
+alt IF
+note over Integra#lightgray:--**IF [TL012]\nMódulo IF**\n**condition :** ""<=""\n**variable1value : SMOP**\n    **operation :** ""param1.quantity""\n    **param1 :** ""{}TL004 : element{/}""\n**variable2value : SMOP**\n    **operation :** ""$number(param1.I_PRECO[0].ESTQDISP)""\n    **param1 :** ""{}CN004 : body{/}""
+else TRUE
+rbox over Integra: --**Update Params [TL013]\nRealiza a atualizaçao de parametros do fluxo**\n**xyCLhV6U_value :** ""[{"sku":"NR-BB53PV3WA","estoque":"OK"}]""\n**xyCLhV6U_smop : SMOP**\n    **operation :** ""$append(param1, [{"sku": param2.refId, "estoque": "OK"}])""\n    **param1 :** ""[]PM004 : estoque[/]""\n    **param2 :** ""{}TL004 : element{/}""\n    **param2 :** ""{}TL004 : element{/}""\n**xyCLhV6U_key :** ""estoque""\n**xyCLhV6U_type :** ""array""\n**xyCLhV6U_example :** """"\n**xyCLhV6U_example :** """"
+else FALSE
+rbox over Integra: --**Update Params [TL014]\nRealiza a atualizaçao de parametros do fluxo**\n**xyCLhV6U_value :** ""[{"sku":"NR-BB53PV3WA","estoque":"NOK"}]""\n**xyCLhV6U_smop : SMOP**\n    **operation :** ""$append(param1, [{"sku": param2.refId, "estoque": "NOK"}])""\n    **param1 :** ""[]PM004 : estoque[/]""\n    **param2 :** ""{}TL004 : element{/}""\n    **param2 :** ""{}TL004 : element{/}""\n**xyCLhV6U_key :** ""estoque""\n**xyCLhV6U_type :** ""array""\n**xyCLhV6U_example :** """"\n**xyCLhV6U_example :** """"
+end
+end
+alt IF
+note over Integra#lightgray:--**IF [TL015]\nMódulo IF**\n**condition :** ""==""\n**variable1value : SMOP**\n    **operation :** """NOK" in $map(param1, function($v){     $v.estoque })""\n    **param1 :** ""[]PM004 : estoque[/]""\n**variable2value :** ""false""
+else TRUE
+Integra->VTEX PANASONIC:--**VTEX PANASONIC [CN003]\nVTEC PANASONIC**\n**X-VTEX-API-AppKey :** ""[]AEqzX7wq : X-VTEX-API-AppKey[/]""\n**X-VTEX-API-AppToken :** ""[]kKYNCbEI : X-VTEX-API-AppToken[/]""\n**OrderId : SMOP**\n    **operation :** ""param1.orderId""\n    **param1 :** ""{}TL002 : element{/}""
+activate VTEX PANASONIC
+VTEX PANASONIC->Integra:--**RESPONSE**
+deactivate VTEX PANASONIC
+rbox over Integra: --**Log [TL017]\nLogar eventos**\n**param1 :** ""ESTOQUE OK""\n**param2 :** ""[]PM004 : estoque[/]""
+else FALSE
+rbox over Integra: --**Log [TL016]\nLogar eventos**\n**param1 :** ""ITEM OU ITENS SEM ESTOQUE DISPONIVEL""\n**param2 :** ""[]PM004 : estoque[/]""
+end
+rbox over Integra: --**Update Params [TL018]\nRealiza a atualizaçao de parametros do fluxo**\n**xyCLhV6U_value :** ""[]""\n**xyCLhV6U_value :** ""[]""\n**xyCLhV6U_key :** ""estoque""\n**xyCLhV6U_type :** ""array""\n**xyCLhV6U_example :** """"\n**xyCLhV6U_example :** """"
+end
+rbox over Integra: --**Update Params [TL008]\nRealiza a atualizaçao de parametros do fluxo**\n**Gh3pVsbd_value :** ""2""\n**Gh3pVsbd_smop : SMOP**\n    **operation :** ""param1 + 1""\n    **param1 :** ""[]PM001 : page[/]""\n    **param1 :** ""[]PM001 : page[/]""\n**Gh3pVsbd_key :** ""page""\n**Gh3pVsbd_type :** ""number""\n**Gh3pVsbd_example :** """"\n**Gh3pVsbd_example :** """"
+note over Integra#lightgray:--**Do While [TL009]\nExecuta um loop com base em alguma lógica condicional**\n**doId :** ""TL001""\n**condition :** ""==""\n**variable1value : SMOP**\n    **operation :** ""param1.pages""\n    **param1 :** ""{}CN001 : paging{/}""\n**variable2value :** ""[]PM001 : page[/]""
+end
+rbox over Integra: --**Update Params [TL010]\nRealiza a atualizaçao de parametros do fluxo**\n**Gh3pVsbd_value :** ""1""\n**Gh3pVsbd_value :** ""1""\n**Gh3pVsbd_key :** ""page""\n**Gh3pVsbd_type :** ""number""\n**Gh3pVsbd_example :** """"\n**Gh3pVsbd_example :** """"
+rbox over Integra: --**Result [TL011]\nArmazena o resultado do passo anterior**\n

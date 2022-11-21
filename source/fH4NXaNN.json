@@ -1,0 +1,844 @@
+[
+  {
+    "module_id": "parameters",
+    "name": "flow Parameters",
+    "information": "flow parameters definition",
+    "type": "parameters",
+    "subtype": "flow",
+    "operation": "none",
+    "description": "flow parameters definition",
+    "parameters": [
+      {
+        "name": "page",
+        "id": "[]Gh3pVsbd : page[/]",
+        "type": "number",
+        "description": "page",
+        "sample": "1"
+      },
+      {
+        "name": "X-VTEX-API-AppKey",
+        "id": "[]AEqzX7wq : X-VTEX-API-AppKey[/]",
+        "type": "string",
+        "description": "X-VTEX-API-AppKey",
+        "sample": "vtexappkey-panasonicqa-FIZOLZ"
+      },
+      {
+        "name": "X-VTEX-API-AppToken",
+        "id": "[]kKYNCbEI : X-VTEX-API-AppToken[/]",
+        "type": "string",
+        "description": "X-VTEX-API-AppToken",
+        "sample": "DUZHZURUSHJUHAABVGTRHQCLWTXBTXIJUNGHLCWJQSRSNPLPXLFICXCMRNLGXPBVYZAUTTPTJKAPYJXGIHEHSZHXKUPYQQLBRWTOPQVEWMZSWNNHPEYPLTDZSCKZDRCS"
+      },
+      {
+        "name": "estoque",
+        "id": "[]xyCLhV6U : estoque[/]",
+        "type": "array",
+        "description": "estoque",
+        "sample": "[]"
+      },
+      {
+        "name": "EMPRESA",
+        "id": "[]2ApVqHp9 : EMPRESA[/]",
+        "type": "string",
+        "description": "EMPRESA",
+        "sample": "PAM"
+      },
+      {
+        "name": "CIDADE",
+        "id": "[]V4leouIr : CIDADE[/]",
+        "type": "string",
+        "description": "CIDADE",
+        "sample": "SP"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "oUPAD9oH",
+    "name": "TIME_TRIGGER",
+    "information": "TIME_TRIGGER_DESC",
+    "type": "trigger",
+    "subtype": "timer",
+    "operation": "repeat",
+    "description": "Trigger once for flow fH4NXaNN",
+    "parameters": [
+      {
+        "name": "start",
+        "value": "Fri Jun 10 2022 17:29:30 GMT-0300"
+      },
+      {
+        "name": "end",
+        "value": "Fri Jun 10 2022 17:29:30 GMT-0300"
+      },
+      {
+        "name": "frequency",
+        "value": "every"
+      },
+      {
+        "name": "time",
+        "value": "30 second"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "BkLAthBh"
+      }
+    ]
+  },
+  {
+    "module_id": "BkLAthBh",
+    "name": "Do While",
+    "information": "Executa um loop com base em alguma lógica condicional",
+    "type": "tool",
+    "subtype": "do",
+    "operation": "start",
+    "description": "Executa um loop com base em alguma lógica condicional",
+    "parameters": [
+      {
+        "name": "loopCount",
+        "value": "{}BkLAthBh : loopCount{/}"
+      },
+      {
+        "name": "restartLoopCount",
+        "value": "{}8gwqh4mA : restartLoopCount{/}"
+      },
+      {
+        "name": "whileId",
+        "value": "8gwqh4mA"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "z7RREk7L"
+      }
+    ]
+  },
+  {
+    "module_id": "z7RREk7L",
+    "name": "VTEX PANASONIC",
+    "information": "VTEC PANASONIC",
+    "type": "connector",
+    "subtype": "REST",
+    "operation": "GET",
+    "description": "VTEC PANASONIC",
+    "parameters": [
+      {
+        "name": "page",
+        "value": "[]Gh3pVsbd : page[/]"
+      },
+      {
+        "name": "X-VTEX-API-AppKey",
+        "value": "[]AEqzX7wq : X-VTEX-API-AppKey[/]"
+      },
+      {
+        "name": "X-VTEX-API-AppToken",
+        "value": "[]kKYNCbEI : X-VTEX-API-AppToken[/]"
+      }
+    ],
+    "origin": "K0VG1eSl",
+    "next": [
+      {
+        "type": "single",
+        "id": "9ktRLLa1"
+      }
+    ]
+  },
+  {
+    "module_id": "9ktRLLa1",
+    "name": "For",
+    "information": "Executa um loop com base em uma lista",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "start",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "loopCounter",
+        "value": "{}9ktRLLa1 : loopCounter{/}"
+      },
+      {
+        "name": "forEndId",
+        "value": "FWsfScBf"
+      },
+      {
+        "name": "restartLoopCounter",
+        "value": "{}FWsfScBf : restartLoopCounter{/}"
+      },
+      {
+        "name": "array",
+        "value": "{}z7RREk7L : list{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "PIzFpVgh"
+      }
+    ]
+  },
+  {
+    "module_id": "PIzFpVgh",
+    "name": "VTEX PANASONIC",
+    "information": "VTEC PANASONIC",
+    "type": "connector",
+    "subtype": "REST",
+    "operation": "GET",
+    "description": "VTEC PANASONIC",
+    "parameters": [
+      {
+        "name": "OrderId",
+        "smop": {
+          "operation": "param1.orderId",
+          "param1": "{}9ktRLLa1 : element{/}"
+        }
+      },
+      {
+        "name": "X-VTEX-API-AppKey",
+        "value": "[]AEqzX7wq : X-VTEX-API-AppKey[/]"
+      },
+      {
+        "name": "X-VTEX-API-AppToken",
+        "value": "[]kKYNCbEI : X-VTEX-API-AppToken[/]"
+      }
+    ],
+    "origin": "K0VG1eSl",
+    "next": [
+      {
+        "type": "single",
+        "id": "9RHAq5hy"
+      }
+    ]
+  },
+  {
+    "module_id": "9RHAq5hy",
+    "name": "Data Transformation",
+    "information": "Módulo para fazer transformação de dados",
+    "type": "tool",
+    "subtype": "transform",
+    "operation": "QUERY",
+    "description": "Módulo para fazer transformação de dados",
+    "parameters": [
+      {
+        "name": "jsonata",
+        "value": "result.components"
+      },
+      {
+        "name": "data",
+        "value": "{}PIzFpVgh : items{/}"
+      },
+      {
+        "name": "type"
+      },
+      {
+        "name": "draggable_data"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "EbbCJBMh"
+      }
+    ]
+  },
+  {
+    "module_id": "EbbCJBMh",
+    "name": "For",
+    "information": "Executa um loop com base em uma lista",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "start",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "loopCounter",
+        "value": "{}EbbCJBMh : loopCounter{/}"
+      },
+      {
+        "name": "forEndId",
+        "value": "nWJytEBB"
+      },
+      {
+        "name": "restartLoopCounter",
+        "value": "{}nWJytEBB : restartLoopCounter{/}"
+      },
+      {
+        "name": "array",
+        "value": "{}PIzFpVgh : items{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "DfaUweG4"
+      }
+    ]
+  },
+  {
+    "module_id": "Uh1UKapb",
+    "name": "Log",
+    "information": "Logar eventos",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "value": "{}DfaUweG4 : body{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "RHt8ibcg"
+      }
+    ]
+  },
+  {
+    "module_id": "nWJytEBB",
+    "name": "For",
+    "information": "Executa um loop com base em uma lista",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "end",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "forBeginId",
+        "value": "EbbCJBMh"
+      },
+      {
+        "name": "arrayLength",
+        "value": "{}EbbCJBMh : arrayLength{/}"
+      },
+      {
+        "name": "loopCounter",
+        "value": "{}EbbCJBMh : loopCounter{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "ZE5niMeI"
+      }
+    ]
+  },
+  {
+    "module_id": "mgPeXEj9",
+    "name": "VTEX PANASONIC",
+    "information": "VTEC PANASONIC",
+    "type": "connector",
+    "subtype": "REST",
+    "operation": "POST",
+    "description": "VTEC PANASONIC",
+    "parameters": [
+      {
+        "name": "X-VTEX-API-AppKey",
+        "value": "[]AEqzX7wq : X-VTEX-API-AppKey[/]"
+      },
+      {
+        "name": "X-VTEX-API-AppToken",
+        "value": "[]kKYNCbEI : X-VTEX-API-AppToken[/]"
+      },
+      {
+        "name": "OrderId",
+        "smop": {
+          "operation": "param1.orderId",
+          "param1": "{}9ktRLLa1 : element{/}"
+        }
+      }
+    ],
+    "origin": "K0VG1eSl",
+    "next": [
+      {
+        "type": "single",
+        "id": "xZqCF3W4"
+      }
+    ]
+  },
+  {
+    "module_id": "FWsfScBf",
+    "name": "For",
+    "information": "Executa um loop com base em uma lista",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "end",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "forBeginId",
+        "value": "9ktRLLa1"
+      },
+      {
+        "name": "arrayLength",
+        "value": "{}9ktRLLa1 : arrayLength{/}"
+      },
+      {
+        "name": "loopCounter",
+        "value": "{}9ktRLLa1 : loopCounter{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "Yw6MKTAw"
+      }
+    ]
+  },
+  {
+    "module_id": "Yw6MKTAw",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "Gh3pVsbd_value",
+        "value": "2"
+      },
+      {
+        "name": "Gh3pVsbd_smop",
+        "smop": {
+          "operation": "param1 + 1",
+          "param1": "[]Gh3pVsbd : page[/]"
+        }
+      },
+      {
+        "name": "Gh3pVsbd",
+        "value": true
+      },
+      {
+        "name": "Gh3pVsbd_key",
+        "value": "page"
+      },
+      {
+        "name": "Gh3pVsbd_type",
+        "value": "number"
+      },
+      {
+        "name": "Gh3pVsbd_example",
+        "value": ""
+      },
+      {
+        "name": "Gh3pVsbd_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "8gwqh4mA"
+      }
+    ]
+  },
+  {
+    "module_id": "8gwqh4mA",
+    "name": "Do While",
+    "information": "Executa um loop com base em alguma lógica condicional",
+    "type": "tool",
+    "subtype": "do",
+    "operation": "while",
+    "description": "Executa um loop com base em alguma lógica condicional",
+    "parameters": [
+      {
+        "name": "doId",
+        "value": "BkLAthBh"
+      },
+      {
+        "name": "condition",
+        "value": "=="
+      },
+      {
+        "name": "variable1value",
+        "smop": {
+          "operation": "param1.pages",
+          "param1": "{}z7RREk7L : paging{/}"
+        }
+      },
+      {
+        "name": "variable2value",
+        "value": "[]Gh3pVsbd : page[/]"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "a1Ixv9Td"
+      }
+    ]
+  },
+  {
+    "module_id": "a1Ixv9Td",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "Gh3pVsbd_value",
+        "value": "1"
+      },
+      {
+        "name": "Gh3pVsbd_smop"
+      },
+      {
+        "name": "Gh3pVsbd",
+        "value": true
+      },
+      {
+        "name": "Gh3pVsbd_key",
+        "value": "page"
+      },
+      {
+        "name": "Gh3pVsbd_type",
+        "value": "number"
+      },
+      {
+        "name": "Gh3pVsbd_example",
+        "value": ""
+      },
+      {
+        "name": "Gh3pVsbd_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "KMnjMnTy"
+      }
+    ]
+  },
+  {
+    "module_id": "KMnjMnTy",
+    "name": "Result",
+    "information": "Armazena o resultado do passo anterior",
+    "type": "tool",
+    "subtype": "RESULT",
+    "operation": "RESULT",
+    "description": "Armazena o resultado do passo anterior",
+    "parameters": [],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "DfaUweG4",
+    "name": "SAP PANASONIC",
+    "information": "SAP PANASONIC",
+    "type": "connector",
+    "subtype": "RFC",
+    "operation": "POST",
+    "description": "SAP PANASONIC",
+    "parameters": [
+      {
+        "name": "CODIGOPRODUTO",
+        "smop": {
+          "operation": "param1.refId",
+          "param1": "{}EbbCJBMh : element{/}"
+        }
+      },
+      {
+        "name": "EMPRESA",
+        "value": "[]2ApVqHp9 : EMPRESA[/]"
+      }
+    ],
+    "origin": "oxE0zcgC",
+    "next": [
+      {
+        "type": "single",
+        "id": "Uh1UKapb"
+      }
+    ]
+  },
+  {
+    "module_id": "RHt8ibcg",
+    "name": "IF",
+    "information": "Módulo IF",
+    "type": "tool",
+    "subtype": "if",
+    "operation": "IF",
+    "description": "Módulo IF",
+    "parameters": [
+      {
+        "name": "condition",
+        "value": "<="
+      },
+      {
+        "name": "variable1value",
+        "smop": {
+          "operation": "param1.quantity",
+          "param1": "{}EbbCJBMh : element{/}"
+        }
+      },
+      {
+        "name": "variable2value",
+        "smop": {
+          "operation": "$number(param1.I_PRECO[0].ESTQDISP)",
+          "param1": "{}DfaUweG4 : body{/}"
+        }
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "true",
+        "id": "73lWzdcY"
+      },
+      {
+        "type": "false",
+        "id": "rbfd4M3z"
+      }
+    ]
+  },
+  {
+    "module_id": "73lWzdcY",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "xyCLhV6U_value",
+        "value": "[{\"sku\":\"NR-BB53PV3WA\",\"estoque\":\"OK\"}]"
+      },
+      {
+        "name": "xyCLhV6U_smop",
+        "smop": {
+          "operation": "$append(param1, [{\"sku\": param2.refId, \"estoque\": \"OK\"}])",
+          "param1": "[]xyCLhV6U : estoque[/]",
+          "param2": "{}EbbCJBMh : element{/}"
+        }
+      },
+      {
+        "name": "xyCLhV6U",
+        "value": true
+      },
+      {
+        "name": "xyCLhV6U_key",
+        "value": "estoque"
+      },
+      {
+        "name": "xyCLhV6U_type",
+        "value": "array"
+      },
+      {
+        "name": "xyCLhV6U_example",
+        "value": ""
+      },
+      {
+        "name": "xyCLhV6U_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "nWJytEBB"
+      }
+    ]
+  },
+  {
+    "module_id": "rbfd4M3z",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "xyCLhV6U_value",
+        "value": "[{\"sku\":\"NR-BB53PV3WA\",\"estoque\":\"NOK\"}]"
+      },
+      {
+        "name": "xyCLhV6U_smop",
+        "smop": {
+          "operation": "$append(param1, [{\"sku\": param2.refId, \"estoque\": \"NOK\"}])",
+          "param1": "[]xyCLhV6U : estoque[/]",
+          "param2": "{}EbbCJBMh : element{/}"
+        }
+      },
+      {
+        "name": "xyCLhV6U",
+        "value": true
+      },
+      {
+        "name": "xyCLhV6U_key",
+        "value": "estoque"
+      },
+      {
+        "name": "xyCLhV6U_type",
+        "value": "array"
+      },
+      {
+        "name": "xyCLhV6U_example",
+        "value": ""
+      },
+      {
+        "name": "xyCLhV6U_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "nWJytEBB"
+      }
+    ]
+  },
+  {
+    "module_id": "ZE5niMeI",
+    "name": "IF",
+    "information": "Módulo IF",
+    "type": "tool",
+    "subtype": "if",
+    "operation": "IF",
+    "description": "Módulo IF",
+    "parameters": [
+      {
+        "name": "condition",
+        "value": "=="
+      },
+      {
+        "name": "variable1value",
+        "smop": {
+          "operation": "\"NOK\" in $map(param1, function($v){     $v.estoque })",
+          "param1": "[]xyCLhV6U : estoque[/]"
+        }
+      },
+      {
+        "name": "variable2value",
+        "value": "false"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "true",
+        "id": "mgPeXEj9"
+      },
+      {
+        "type": "false",
+        "id": "h3v3GtWX"
+      }
+    ]
+  },
+  {
+    "module_id": "h3v3GtWX",
+    "name": "Log",
+    "information": "Logar eventos",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "value": "ITEM OU ITENS SEM ESTOQUE DISPONIVEL"
+      },
+      {
+        "name": "param2",
+        "value": "[]xyCLhV6U : estoque[/]"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "lGkykhiz"
+      }
+    ]
+  },
+  {
+    "module_id": "xZqCF3W4",
+    "name": "Log",
+    "information": "Logar eventos",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "value": "ESTOQUE OK"
+      },
+      {
+        "name": "param2",
+        "value": "[]xyCLhV6U : estoque[/]"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "lGkykhiz"
+      }
+    ]
+  },
+  {
+    "module_id": "lGkykhiz",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "xyCLhV6U_value",
+        "value": "[]"
+      },
+      {
+        "name": "xyCLhV6U_smop"
+      },
+      {
+        "name": "xyCLhV6U",
+        "value": true
+      },
+      {
+        "name": "xyCLhV6U_key",
+        "value": "estoque"
+      },
+      {
+        "name": "xyCLhV6U_type",
+        "value": "array"
+      },
+      {
+        "name": "xyCLhV6U_example",
+        "value": ""
+      },
+      {
+        "name": "xyCLhV6U_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "FWsfScBf"
+      }
+    ]
+  }
+]
