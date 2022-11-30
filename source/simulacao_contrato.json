@@ -1,0 +1,521 @@
+[
+  {
+    "module_id": "parameters",
+    "name": "flow Parameters",
+    "information": "flow parameters definition",
+    "type": "parameters",
+    "subtype": "flow",
+    "operation": "none",
+    "description": "flow parameters definition",
+    "parameters": [
+      {
+        "name": "zsdsf",
+        "id": "[]mCBkPP2s : zsdsf[/]",
+        "type": "array",
+        "description": "zsdsf",
+        "sample": "[]"
+      },
+      {
+        "name": "itens",
+        "id": "[]QQCVSxi2 : itens[/]",
+        "type": "array",
+        "description": "itens",
+        "sample": "[]"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "parameters",
+    "name": "integration Parameters",
+    "information": "integration parameters definition",
+    "type": "parameters",
+    "subtype": "integration",
+    "operation": "none",
+    "description": "integration parameters definition",
+    "parameters": [
+      {
+        "name": "Token",
+        "id": "[]eRVJRm2B : Token[/]",
+        "type": "string",
+        "description": "Token",
+        "sample": "Bearer 00D6u0000008g4z!AR0AQGZV8l4Qa4PHUyFxJ9rYjLusxT2cbjcQ2Y9Ny3jpZkUhocu_FBPIetg5ycT5J52dHMpP6Isg9cSNRrr_FPlEmd25oNBX"
+      },
+      {
+        "name": "Token PRD",
+        "id": "[]1AFRROwJ : Token PRD[/]",
+        "type": "string",
+        "description": "Token",
+        "sample": "Bearer 00D8c000005Honz!ARkAQDda4SGtT73NiCda1mZg0ifhuFDZ1I5kyYxR4dZXkJD840BB1gDiL9urLbCv420leMF3RYsHFVtyyJcCubWEsvhT7lw3"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "Bo93f6BH",
+    "name": "Return",
+    "information": "Retorna os dados de uma requisição",
+    "type": "tool",
+    "subtype": "RETURN",
+    "operation": "RETURN",
+    "description": "Retorna os dados de uma requisição",
+    "parameters": [
+      {
+        "name": "data",
+        "value": "{}8VIPV0cs : data{/}"
+      },
+      {
+        "name": "jsonata",
+        "value": "result"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "LSQ00050",
+    "name": "Data Transformation",
+    "information": "Módulo para fazer transformação de dados",
+    "type": "tool",
+    "subtype": "transform",
+    "operation": "QUERY",
+    "description": "Módulo para fazer transformação de dados",
+    "parameters": [
+      {
+        "name": "jsonata",
+        "value": "{\n    \"TESTRUN\": result.simulacao = true ? \"X\" : \"\",\n    \"SALES_HEADER_IN\": {\n                        \"SALES_ORG\": $substringBefore(result.orgVendas, \"-\"),\n                        \"DLVSCHDUSE\": $substringBefore(result.utilizacao, \" -\"),\n                        \"DISTR_CHAN\":  $substringBefore(result.canalDistribuicao, \"-\"),\n                        \"DIVISION\":  $substringBefore(result.setorAtividade, \"-\"),\n                        \"SALES_GRP\": $substringBefore(result.codVendedor, \"-\"),\n                        \"SALES_OFF\": $substringBefore(result.escritorioVendas, \"-\"),\n                        \"PMNTTRMS\": $substringBefore(result.codCondPagamento, \"-\"),\n                        \"PURCH_NO_C\": result.codSimulacao,\n                        \"BILL_DATE\": result.dataFaturamento != null ? $toMillis(result.dataFaturamento) ~> $fromMillis(\"[Y0001].[M01].[D01]\") : null,\n                        \"PO_DAT_S\": result.dataEntrega != null ? $toMillis(result.dataEntrega) ~> $fromMillis(\"[Y0001].[M01].[D01]\") : null,\n                        \"INCOTERMS1\": $substringBefore(result.incoterms, \"-\"),\n                        \"S_PROC_IND\": result.tipoCarga = \"Fracionado\" ? \"FRAC\" : \"LOT\",\n                        \"SHIP_TYPE\": result.tipoExpedicao,\n                        \"PURCH_NO_S\": result.numPedidoCliente,\n                        \"PRICE_GRP\": result.mostruario = true ? \"99\": \"\"\n                       },\n    \"SALES_PARTNERS\": [{\n                        \"PARTN_NUMB\": result.codCliente,\n                        \"PARTN_ROLE\": \"AG\"\n                      },\n                      {\n                        \"PARTN_NUMB\": result.codClienteCobranca,\n                        \"PARTN_ROLE\": \"RG\"\n                      },\n                      {\n                        \"PARTN_NUMB\": result.codClienteEntrega,\n                        \"PARTN_ROLE\": \"WE\"\n                      },\n                      {\n                        \"PARTN_NUMB\": result.transportadora != null ? $join([$substring(\"0000000000\",$length(result.transportadora)), result.transportadora]) : \"\",\n                        \"PARTN_ROLE\": \"SP\"\n                      }],\n    \"SALES_ITEMS_IN\": [$map(result.produtos, function($v){\n                        {\n                            \"ITM_NUMBER\": $string($v.item),\n                            \"MATERIAL\": $v.codProdutoSap,\n                            \"PLANT\": $substringBefore($$.result.centro, \"-\"),\n                            \"SHIP_POINT\":  $substringBefore(result.localExp, \"-\"),\n                            \"STORE_LOC\":  $substringBefore(result.deposito, \"-\"),\n                            \"TARGET_QTY\": $string($v.qtde),\n                            \"PRICE_GRP\": $$.result.mostruario = true ? \"99\": \"\"\n                        }\n                    })],\n    \"SALES_CONDITIONS_IN\": $append($map(result.produtos, function($v){\n                                {\n                                    \"ITM_NUMBER\": $string($v.item),\n                                    \"COND_TYPE\": \"ZNEG\",\n                                    \"COND_VALUE\": $string($v.valorProposto),\n                                    \"CURRENCY\": \"BRL\"\n                                }\n                           }),$map(result.produtos, function($v){\n                                {\n                                    \"ITM_NUMBER\": $string($v.item),\n                                    \"COND_TYPE\": \"ZDSR\",\n                                    \"COND_VALUE\": $string($v.mostruarioPercent*10),\n                                    \"CURRENCY\": \"BRL\"\n                                }\n                           })),\n    \"SALES_TEXT\": $append($append([$map(result.produtos, function($v){\n                $exists($$.result.justificativa) = true ? {\n                    \"DOC_NUMBER\": \" \",\n                    \"ITM_NUMBER\": $string($v.item),\n                    \"TEXT_ID\": \"Z001\",\n                    \"LANGU\": \"P\",\n                    \"LANGU_ISO\": \" \",\n                    \"FORMAT_COL\": \"*\",\n                    \"TEXT_LINE\": $$.result.justificativa != null ? $replace($trim($$.result.justificativa), \"–\", \"-\") : $$.result.justificativa\n                }\n                })], \n                [\n                $exists($$.result.obsPedido) = true ? {\n                    \"DOC_NUMBER\": \" \",\n                    \"ITM_NUMBER\": \"000000\",\n                    \"TEXT_ID\": \"0003\",\n                    \"LANGU\": \"P\",\n                    \"LANGU_ISO\": \" \",\n                    \"FORMAT_COL\": \"*\",\n                    \"TEXT_LINE\": $$.result.obsPedido != null ? $trim($$.result.obsPedido) : $$.result.obsPedido\n                }\n                ]),\n                [\n                $exists($$.result.obsNf) = true ? {\n                    \"DOC_NUMBER\": \" \",\n                    \"ITM_NUMBER\": \"000000\",\n                    \"TEXT_ID\": \"NFH\",\n                    \"LANGU\": \"P\",\n                    \"LANGU_ISO\": \" \",\n                    \"FORMAT_COL\": \"*\",\n                    \"TEXT_LINE\": $$.result.obsNf != null ? $trim($$.result.obsNf) : $$.result.obsNf\n                }\n                ]\n                )\n}"
+      },
+      {
+        "name": "data",
+        "value": "{}54TNLoke : body{/}"
+      },
+      {
+        "name": "type"
+      },
+      {
+        "name": "draggable_data"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "G7lsHze5"
+      }
+    ]
+  },
+  {
+    "module_id": "L4iEIE1C",
+    "name": "IF",
+    "information": "Módulo IF",
+    "type": "tool",
+    "subtype": "if",
+    "operation": "IF",
+    "description": "Módulo IF",
+    "parameters": [
+      {
+        "name": "condition",
+        "value": "=="
+      },
+      {
+        "name": "variable1value",
+        "smop": {
+          "operation": "$contains($string($map(param1.RETURN.NUMBER, function($v){$number($v) = 233 ? true : $number($v) = 311 ? true : false})), \"false\")",
+          "param1": "{}G7lsHze5 : body{/}"
+        }
+      },
+      {
+        "name": "variable2value",
+        "value": "false"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "true",
+        "id": "OFpEv1Bt"
+      },
+      {
+        "type": "false",
+        "id": "W6Yx2OK4"
+      }
+    ]
+  },
+  {
+    "module_id": "W6Yx2OK4",
+    "name": "Return",
+    "information": "Retorna os dados de uma requisição",
+    "type": "tool",
+    "subtype": "RETURN",
+    "operation": "RETURN",
+    "description": "Retorna os dados de uma requisição",
+    "parameters": [
+      {
+        "name": "data",
+        "value": "{}G7lsHze5 : body{/}"
+      },
+      {
+        "name": "jsonata",
+        "value": "{\n\"mensagens\": $append(result.RETURN[NUMBER != \"233\"].MESSAGE, $count(result.RETURN[NUMBER = \"999\"][$contains(MESSAGE, \"Justificativa de preço\")]) > 0 ? \"Valor negociado fora da margem de negociação\") \n}"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "54TNLoke",
+    "name": "API_GATEWAY_TRIGGER",
+    "information": "API_GATEWAY_TRIGGER_DESC",
+    "type": "trigger",
+    "subtype": "api",
+    "operation": "api-gateway",
+    "description": "Trigger api-gateway for flow WHAtSKOw",
+    "parameters": [
+      {
+        "name": "apiGatewayId",
+        "value": "AjWizswe"
+      },
+      {
+        "name": "apiGatewayVersionId",
+        "value": "E6yUSXeQ"
+      },
+      {
+        "name": "apiGatewayPathId",
+        "value": "rhtxwHT0"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "LSQ00050"
+      }
+    ]
+  },
+  {
+    "module_id": "cRqEU9YV",
+    "name": "Data Transformation",
+    "information": "Módulo para fazer transformação de dados",
+    "type": "tool",
+    "subtype": "transform",
+    "operation": "QUERY",
+    "description": "Módulo para fazer transformação de dados",
+    "parameters": [
+      {
+        "name": "jsonata",
+        "value": "{\n                \"item\": result.item.ITM_NUMBER,\n                \"codProdutoSap\": result.item.MATERIAL,\n                \"juros\": result.ZSDSF[COND_TYPE = 'ZJUR'].CONDVALUE,\n                \"jurosPorcen\": result.ZSDSF[COND_TYPE = 'ZJUR'].COND_VALUE,\n                \"psvCaixa\": result.ZSDSF[COND_TYPE = 'ZNEG'][CONDISACTI = \"\"].CONDVALUE,\n                \"valorLiquidoSemEncargos\": $substringBefore(result.setor, \"-\") = \"03\" ? result.item.NET_VALUE : result.ZSDSF[COND_TYPE = 'ZLSE'].CONDVALUE,\n                \"valorTotalNF\": result.ZSDSF[COND_TYPE = 'ZINF'].CONDVALUE,\n                \"psv\": result.ZSDSF[COND_TYPE = 'ZPCO'].CONDVALUE,\n                \"margemPercent\": result.ZSDSF[COND_TYPE = 'ZMC1'].COND_VALUE,\n                \"margem\": result.ZSDSF[COND_TYPE = 'ZMC1'].CONDVALUE,\n                \"icmsDestinoPorcen\": $exists(result.ZSDSF[COND_TYPE = 'ICAP'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ICAP'].COND_VALUE : \"0\",\n                \"icmsDestinoValor\": $exists(result.ZSDSF[COND_TYPE = 'ICAP'].CONDVALUE) = true ? result.ZSDSF[COND_TYPE = 'ICAP'].CONDVALUE : \"0\",\n                \"icmsValor\": result.ZSDSF[COND_TYPE = 'ICM3'].CONDVALUE,\n                \"icmsPorcen\": result.ZSDSF[COND_TYPE = 'ZIP9'].COND_VALUE,\n                \"pisPorcen\": result.ZSDSF[COND_TYPE = 'IPS3'].COND_VALUE,\n                \"pisValor\": result.ZSDSF[COND_TYPE = 'IPS3'].CONDVALUE,\n                \"cofinsPorcen\": result.ZSDSF[COND_TYPE = 'ICN3'].COND_VALUE,\n                \"cofinsValor\": result.ZSDSF[COND_TYPE = 'ICN3'].CONDVALUE,\n                \"ipiPorcen\": $exists(result.ZSDSF[COND_TYPE = 'ZIP8'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ZIP8'].COND_VALUE : \"0\",\n                \"ipiValor\": $exists(result.ZSDSF[COND_TYPE = 'IPI3'].CONDVALUE) = true ? result.ZSDSF[COND_TYPE = 'IPI3'].CONDVALUE : \"0\",\n                \"incentivoICMSPorcen\": $exists(result.ZSDSF[COND_TYPE = 'ZCM3'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ZCM3'].COND_VALUE : \"0\",\n                \"incentivoICMSValor\": $exists(result.ZSDSF[COND_TYPE = 'ZCM3'].CONDVALUE) = true ? result.ZSDSF[COND_TYPE = 'ZCM3'].CONDVALUE : \"0\",\n                \"pesoLiquido\": result.item.NET_WEIGHT,\n                \"pesoBruto\": result.item.GROSS_WEIG,\n                \"volume_Metragem\": result.item.VOLUME,\n                \"valorMostruario\": $exists(result.ZSDSF[COND_TYPE = 'ZDSR'][CONDISACTI = \"\"].CONDVALUE) = true ? result.ZSDSF[COND_TYPE = 'ZDSR'][CONDISACTI = \"\"].CONDVALUE : \"0\",\n                \"armazenagemST\": $exists(result.ZSDSF[COND_TYPE = 'ZARM'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ZARM'].COND_VALUE : \"0\" ,\n                \"valorComFreteCIF\": \"0\",\n                \"frete\": $exists(result.ZSDSF[COND_TYPE = 'ZFRS'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ZFRS'].COND_VALUE : \"0\",\n                \"valorConhecimentoFreteUnit\": \"0\",\n                \"substituicaoTributaria\": $exists(result.ZSDSF[COND_TYPE = 'ICS3'].CONDVALUE) = true ? result.ZSDSF[COND_TYPE = 'ICS3'].CONDVALUE : \"0\",\n                \"substituicaoTributariaPorcen\": $exists(result.ZSDSF[COND_TYPE = 'ICS3'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ICS3'].COND_VALUE : \"0\",\n                \"costOfSales\": $exists(result.ZSDSF[COND_TYPE = \"ZCMU\"].CONDVALUE) = true ? result.ZSDSF[COND_TYPE = \"ZCMU\"].CONDVALUE : \"0\",\n                \"icmsPsv\": $exists(result.ZSDSF[COND_TYPE = 'ZTL4'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'ZTL4'].COND_VALUE : \"0\",\n                \"precoAVista\": $exists(result.ZSDSF[COND_TYPE = \"ZNEP\"].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = \"ZNEP\"].COND_VALUE : \"0\",\n                \"icmsDisplay\": result.ZSDSF[COND_TYPE = 'ICM3'].COND_VALUE,\n                \"ipiDisplay\": $exists(result.ZSDSF[COND_TYPE = 'IPI3'].COND_VALUE) = true ? result.ZSDSF[COND_TYPE = 'IPI3'].COND_VALUE : \"0\"\n}"
+      },
+      {
+        "name": "data",
+        "value": "{\"item\": {}OFpEv1Bt : element{/},\n    \"ZSDSF\": []mCBkPP2s : zsdsf[/],\n    \"setor\": \"{}54TNLoke : body.setorAtividade{/}\"\n}"
+      },
+      {
+        "name": "type"
+      },
+      {
+        "name": "draggable_data"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "pUaLOHiO"
+      }
+    ]
+  },
+  {
+    "module_id": "OFpEv1Bt",
+    "name": "For",
+    "information": "Executa um loop com base em uma lista",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "start",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "loopCounter",
+        "value": "{}OFpEv1Bt : loopCounter{/}"
+      },
+      {
+        "name": "forEndId",
+        "value": "4M1TONIV"
+      },
+      {
+        "name": "restartLoopCounter",
+        "value": "{}4M1TONIV : restartLoopCounter{/}"
+      },
+      {
+        "name": "array",
+        "smop": {
+          "operation": "param1.ITEMS_EX",
+          "param1": "{}G7lsHze5 : body{/}"
+        }
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "MKQBKUOw"
+      }
+    ]
+  },
+  {
+    "module_id": "pUaLOHiO",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "QQCVSxi2_value",
+        "value": "[{\"item\":\"000001\",\"codProdutoSap\":\"6LF22XAB/1B24\",\"juros\":\"1.020000000\",\"jurosPorcen\":\"3.836000000\",\"psvCaixa\":\"202.530000000\",\"valorLiquidoSemEncargos\":\"150.710000000\",\"valorTotalNF\":\"222.280000000\",\"psv\":\"129.120000000\",\"margemPercent\":\"0.000000000\",\"margem\":\"0.000000000\",\"icmsDestinoPorcen\":\"0.000000000\",\"icmsDestinoValor\":\"0.000000000\",\"icmsValor\":\"36.460000000\",\"icmsPorcen\":\"18.000000000\",\"pisPorcen\":\"1.650000000\",\"pisValor\":\"2.740000000\",\"cofinsPorcen\":\"7.600000000\",\"cofinsValor\":\"12.620000000\",\"ipiPorcen\":\"9.750000000\",\"ipiValor\":\"19.750000000\",\"pesoLiquido\":\"1.030\",\"pesoBruto\":\"1.210\",\"volume_Metragem\":\"0.000\",\"armazenagemST\":\"0\",\"valorComFreteCIF\":0,\"frete\":\"0.000000000\",\"valorConhecimentoFreteUnit\":\"0\",\"substituicaoTributaria\":\"0.000000000\",\"substituicaoTributariaPorcen\":\"0.000000000\",\"costOfSales\":\"0\",\"icmsPsv\":\"18.000000000\",\"precoAVista\":\"202.530000000\"}]"
+      },
+      {
+        "name": "QQCVSxi2_smop",
+        "smop": {
+          "operation": "$append(param2, param1)",
+          "param1": "{}cRqEU9YV : data{/}",
+          "param2": "[]QQCVSxi2 : itens[/]"
+        }
+      },
+      {
+        "name": "QQCVSxi2",
+        "value": true
+      },
+      {
+        "name": "QQCVSxi2_key",
+        "value": "itens"
+      },
+      {
+        "name": "QQCVSxi2_type",
+        "value": "array"
+      },
+      {
+        "name": "QQCVSxi2_example",
+        "value": ""
+      },
+      {
+        "name": "QQCVSxi2_required",
+        "value": false
+      },
+      {
+        "name": "mCBkPP2s_value",
+        "value": "[]"
+      },
+      {
+        "name": "mCBkPP2s_smop"
+      },
+      {
+        "name": "mCBkPP2s",
+        "value": true
+      },
+      {
+        "name": "mCBkPP2s_key",
+        "value": "zsdsf"
+      },
+      {
+        "name": "mCBkPP2s_type",
+        "value": "array"
+      },
+      {
+        "name": "mCBkPP2s_example",
+        "value": ""
+      },
+      {
+        "name": "mCBkPP2s_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "4M1TONIV"
+      }
+    ]
+  },
+  {
+    "module_id": "4M1TONIV",
+    "name": "For",
+    "information": "Executa um loop com base em uma lista",
+    "type": "tool",
+    "subtype": "for",
+    "operation": "end",
+    "description": "Executa um loop com base em uma lista",
+    "parameters": [
+      {
+        "name": "forBeginId",
+        "value": "OFpEv1Bt"
+      },
+      {
+        "name": "arrayLength",
+        "value": "{}OFpEv1Bt : arrayLength{/}"
+      },
+      {
+        "name": "loopCounter",
+        "value": "{}OFpEv1Bt : loopCounter{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "8VIPV0cs"
+      }
+    ]
+  },
+  {
+    "module_id": "8VIPV0cs",
+    "name": "Data Transformation",
+    "information": "Módulo para fazer transformação de dados",
+    "type": "tool",
+    "subtype": "transform",
+    "operation": "QUERY",
+    "description": "Módulo para fazer transformação de dados",
+    "parameters": [
+      {
+        "name": "jsonata",
+        "value": "{\n    \"numeroPedido\": result.SALES_HEADER.PURCH_NO,\n    \"mensagens\": \"\",\n    \"numContrato\": result.SALES_DOC,\n    \"itens\": result.ITEMS\n}"
+      },
+      {
+        "name": "data",
+        "value": "{\n    \"SALES_DOC\": \"{}G7lsHze5 : body.SALESDOCUMENT_EX{/}\",\n    \"SALES_HEADER\": {}G7lsHze5 : body.SALES_HEADER_OUT{/},\n    \"ITEMS\": []QQCVSxi2 : itens[/]\n}\n\n"
+      },
+      {
+        "name": "type"
+      },
+      {
+        "name": "draggable_data"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "0SeiuxAv"
+      }
+    ]
+  },
+  {
+    "module_id": "MKQBKUOw",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "mCBkPP2s_value",
+        "value": "[{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"008\",\"COND_TYPE\":\"ZPCO\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"2599.000000000\",\"CONDVALUE\":\"12995.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"120\",\"COND_TYPE\":\"ZJUR\",\"CONBASEVAL\":\"5633.190000000\",\"COND_VALUE\":\"3.836000000\",\"CONDVALUE\":\"216.090000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"170\",\"COND_TYPE\":\"ZNEG\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"X\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"170\",\"COND_TYPE\":\"ZNEG\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"1458.000000000\",\"CONDVALUE\":\"7290.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"581\",\"COND_TYPE\":\"ZTL4\",\"CONBASEVAL\":\"12995.000000000\",\"COND_VALUE\":\"18.000000000\",\"CONDVALUE\":\"2339.100000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"585\",\"COND_TYPE\":\"ZMC1\",\"CONBASEVAL\":\"24387.520000000\",\"COND_VALUE\":\"38.500000000\",\"CONDVALUE\":\"4102.520000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"587\",\"COND_TYPE\":\"ZIP8\",\"CONBASEVAL\":\"6553.380000000\",\"COND_VALUE\":\"6.500000000\",\"CONDVALUE\":\"-428.730000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"588\",\"COND_TYPE\":\"ZIP9\",\"CONBASEVAL\":\"34614.690000000\",\"COND_VALUE\":\"12.000000000\",\"CONDVALUE\":\"839.100000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"610\",\"COND_TYPE\":\"IPI3\",\"CONBASEVAL\":\"7290.000000000\",\"COND_VALUE\":\"6.500000000\",\"CONDVALUE\":\"473.850000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"620\",\"COND_TYPE\":\"ICM3\",\"CONBASEVAL\":\"7290.000000000\",\"COND_VALUE\":\"12.000000000\",\"CONDVALUE\":\"874.800000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"622\",\"COND_TYPE\":\"ICAP\",\"CONBASEVAL\":\"0.000000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"630\",\"COND_TYPE\":\"ICS3\",\"CONBASEVAL\":\"9999999.990000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"755\",\"COND_TYPE\":\"ZINF\",\"CONBASEVAL\":\"7763.850000000\",\"COND_VALUE\":\"100.000000000\",\"CONDVALUE\":\"7763.850000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"861\",\"COND_TYPE\":\"ZCM3\",\"CONBASEVAL\":\"7290.000000000\",\"COND_VALUE\":\"10.000000000\",\"CONDVALUE\":\"729.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"925\",\"COND_TYPE\":\"ZDSR\",\"CONBASEVAL\":\"18496.550000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"M\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"925\",\"COND_TYPE\":\"ZDSR\",\"CONBASEVAL\":\"18496.550000000\",\"COND_VALUE\":\"0.017000000\",\"CONDVALUE\":\"3.140000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"946\",\"COND_TYPE\":\"ZLSE\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"5606.500000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"991\",\"COND_TYPE\":\"IPS3\",\"CONBASEVAL\":\"6415.200000000\",\"COND_VALUE\":\"1.650000000\",\"CONDVALUE\":\"105.850000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"993\",\"COND_TYPE\":\"ICN3\",\"CONBASEVAL\":\"6415.200000000\",\"COND_VALUE\":\"7.600000000\",\"CONDVALUE\":\"487.560000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"995\",\"COND_TYPE\":\"ZFRS\",\"CONBASEVAL\":\"46923.890000000\",\"COND_VALUE\":\"5.750000000\",\"CONDVALUE\":\"5.750000000\",\"CONDISACTI\":\"\"}]"
+      },
+      {
+        "name": "mCBkPP2s_smop",
+        "smop": {
+          "operation": "$append(param3, param1.ZSDSF_CONDITIONS[ITM_NUMBER = $$.param2.ITM_NUMBER])",
+          "param1": "{}G7lsHze5 : body{/}",
+          "param2": "{}OFpEv1Bt : element{/}",
+          "param3": "[]mCBkPP2s : zsdsf[/]"
+        }
+      },
+      {
+        "name": "mCBkPP2s",
+        "value": true
+      },
+      {
+        "name": "mCBkPP2s_key",
+        "value": "zsdsf"
+      },
+      {
+        "name": "mCBkPP2s_type",
+        "value": "array"
+      },
+      {
+        "name": "mCBkPP2s_example",
+        "value": ""
+      },
+      {
+        "name": "mCBkPP2s_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "cRqEU9YV"
+      }
+    ]
+  },
+  {
+    "module_id": "0SeiuxAv",
+    "name": "Update Params",
+    "information": "Realiza a atualizaçao de parametros do fluxo",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "QQCVSxi2_value",
+        "value": "[]"
+      },
+      {
+        "name": "QQCVSxi2_smop"
+      },
+      {
+        "name": "QQCVSxi2",
+        "value": true
+      },
+      {
+        "name": "QQCVSxi2_key",
+        "value": "itens"
+      },
+      {
+        "name": "QQCVSxi2_type",
+        "value": "array"
+      },
+      {
+        "name": "QQCVSxi2_example",
+        "value": ""
+      },
+      {
+        "name": "QQCVSxi2_required",
+        "value": false
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "Bo93f6BH"
+      }
+    ]
+  },
+  {
+    "module_id": "G7lsHze5",
+    "name": "SAP BRSAPP1",
+    "information": "Modulo SAP brsapqa",
+    "type": "connector",
+    "subtype": "RFC",
+    "operation": "POST",
+    "description": "Modulo SAP brsapqa",
+    "parameters": [
+      {
+        "name": "body",
+        "value": "{}LSQ00050 : data{/}"
+      }
+    ],
+    "origin": "5WQBddXy",
+    "next": [
+      {
+        "type": "single",
+        "id": "L4iEIE1C"
+      }
+    ]
+  }
+]
