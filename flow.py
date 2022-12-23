@@ -6,7 +6,7 @@ IAC_FILE = 'areadevendas.json'
 OUT_FILE = 'sequence_diagram.txt'
 
 # Execute remap
-REMAP = False
+REMAP = True
 
 import json
 import os
