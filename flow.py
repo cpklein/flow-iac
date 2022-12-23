@@ -2,11 +2,11 @@
 
 # Files and directory
 DIRECTORY = '/Users/caio/Development/integra/flow/source'
-IAC_FILE = 'simulacao_contrato.json'
+IAC_FILE = 'areadevendas.json'
 OUT_FILE = 'sequence_diagram.txt'
 
 # Execute remap
-REMAP = True
+REMAP = False
 
 import json
 import os
@@ -82,6 +82,10 @@ def process_flow(module, modules, vectors, sequence_diagram):
             # joint_next may have multiple copies of next_hop
             cons = [mod["module_id"] for mod in joint_next]
             consolidated = set(cons)
+            if len(consolidated) == 0:
+                # Both branches ended the flow without reconvergence
+                sequence_diagram.append('end')
+                return([])
             # If they are all equal
             if len(consolidated) == 1:
                 #We're safe to move on and can CLOSE multiple path

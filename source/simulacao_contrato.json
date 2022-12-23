@@ -9,17 +9,17 @@
     "description": "flow parameters definition",
     "parameters": [
       {
-        "name": "zsdsf",
-        "id": "[]mCBkPP2s : zsdsf[/]",
-        "type": "array",
-        "description": "zsdsf",
-        "sample": "[]"
-      },
-      {
         "name": "itens",
         "id": "[]QQCVSxi2 : itens[/]",
         "type": "array",
         "description": "itens",
+        "sample": "[]"
+      },
+      {
+        "name": "zsdsf",
+        "id": "[]mCBkPP2s : zsdsf[/]",
+        "type": "array",
+        "description": "zsdsf",
         "sample": "[]"
       }
     ],
@@ -271,11 +271,7 @@
     "description": "Realiza a atualizaçao de parametros do fluxo",
     "parameters": [
       {
-        "name": "QQCVSxi2_value",
-        "value": "[{\"item\":\"000001\",\"codProdutoSap\":\"6LF22XAB/1B24\",\"juros\":\"1.020000000\",\"jurosPorcen\":\"3.836000000\",\"psvCaixa\":\"202.530000000\",\"valorLiquidoSemEncargos\":\"150.710000000\",\"valorTotalNF\":\"222.280000000\",\"psv\":\"129.120000000\",\"margemPercent\":\"0.000000000\",\"margem\":\"0.000000000\",\"icmsDestinoPorcen\":\"0.000000000\",\"icmsDestinoValor\":\"0.000000000\",\"icmsValor\":\"36.460000000\",\"icmsPorcen\":\"18.000000000\",\"pisPorcen\":\"1.650000000\",\"pisValor\":\"2.740000000\",\"cofinsPorcen\":\"7.600000000\",\"cofinsValor\":\"12.620000000\",\"ipiPorcen\":\"9.750000000\",\"ipiValor\":\"19.750000000\",\"pesoLiquido\":\"1.030\",\"pesoBruto\":\"1.210\",\"volume_Metragem\":\"0.000\",\"armazenagemST\":\"0\",\"valorComFreteCIF\":0,\"frete\":\"0.000000000\",\"valorConhecimentoFreteUnit\":\"0\",\"substituicaoTributaria\":\"0.000000000\",\"substituicaoTributariaPorcen\":\"0.000000000\",\"costOfSales\":\"0\",\"icmsPsv\":\"18.000000000\",\"precoAVista\":\"202.530000000\"}]"
-      },
-      {
-        "name": "QQCVSxi2_smop",
+        "name": "[]QQCVSxi2 : itens[/]",
         "smop": {
           "operation": "$append(param2, param1)",
           "param1": "{}cRqEU9YV : data{/}",
@@ -283,51 +279,8 @@
         }
       },
       {
-        "name": "QQCVSxi2",
-        "value": true
-      },
-      {
-        "name": "QQCVSxi2_key",
-        "value": "itens"
-      },
-      {
-        "name": "QQCVSxi2_type",
-        "value": "array"
-      },
-      {
-        "name": "QQCVSxi2_example",
-        "value": ""
-      },
-      {
-        "name": "QQCVSxi2_required",
-        "value": false
-      },
-      {
-        "name": "mCBkPP2s_value",
+        "name": "[]mCBkPP2s : zsdsf[/]",
         "value": "[]"
-      },
-      {
-        "name": "mCBkPP2s_smop"
-      },
-      {
-        "name": "mCBkPP2s",
-        "value": true
-      },
-      {
-        "name": "mCBkPP2s_key",
-        "value": "zsdsf"
-      },
-      {
-        "name": "mCBkPP2s_type",
-        "value": "array"
-      },
-      {
-        "name": "mCBkPP2s_example",
-        "value": ""
-      },
-      {
-        "name": "mCBkPP2s_required",
-        "value": false
       }
     ],
     "origin": "none",
@@ -410,37 +363,13 @@
     "description": "Realiza a atualizaçao de parametros do fluxo",
     "parameters": [
       {
-        "name": "mCBkPP2s_value",
-        "value": "[{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"008\",\"COND_TYPE\":\"ZPCO\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"2599.000000000\",\"CONDVALUE\":\"12995.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"120\",\"COND_TYPE\":\"ZJUR\",\"CONBASEVAL\":\"5633.190000000\",\"COND_VALUE\":\"3.836000000\",\"CONDVALUE\":\"216.090000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"170\",\"COND_TYPE\":\"ZNEG\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"X\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"170\",\"COND_TYPE\":\"ZNEG\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"1458.000000000\",\"CONDVALUE\":\"7290.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"581\",\"COND_TYPE\":\"ZTL4\",\"CONBASEVAL\":\"12995.000000000\",\"COND_VALUE\":\"18.000000000\",\"CONDVALUE\":\"2339.100000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"585\",\"COND_TYPE\":\"ZMC1\",\"CONBASEVAL\":\"24387.520000000\",\"COND_VALUE\":\"38.500000000\",\"CONDVALUE\":\"4102.520000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"587\",\"COND_TYPE\":\"ZIP8\",\"CONBASEVAL\":\"6553.380000000\",\"COND_VALUE\":\"6.500000000\",\"CONDVALUE\":\"-428.730000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"588\",\"COND_TYPE\":\"ZIP9\",\"CONBASEVAL\":\"34614.690000000\",\"COND_VALUE\":\"12.000000000\",\"CONDVALUE\":\"839.100000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"610\",\"COND_TYPE\":\"IPI3\",\"CONBASEVAL\":\"7290.000000000\",\"COND_VALUE\":\"6.500000000\",\"CONDVALUE\":\"473.850000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"620\",\"COND_TYPE\":\"ICM3\",\"CONBASEVAL\":\"7290.000000000\",\"COND_VALUE\":\"12.000000000\",\"CONDVALUE\":\"874.800000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"622\",\"COND_TYPE\":\"ICAP\",\"CONBASEVAL\":\"0.000000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"630\",\"COND_TYPE\":\"ICS3\",\"CONBASEVAL\":\"9999999.990000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"755\",\"COND_TYPE\":\"ZINF\",\"CONBASEVAL\":\"7763.850000000\",\"COND_VALUE\":\"100.000000000\",\"CONDVALUE\":\"7763.850000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"861\",\"COND_TYPE\":\"ZCM3\",\"CONBASEVAL\":\"7290.000000000\",\"COND_VALUE\":\"10.000000000\",\"CONDVALUE\":\"729.000000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"925\",\"COND_TYPE\":\"ZDSR\",\"CONBASEVAL\":\"18496.550000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"0.000000000\",\"CONDISACTI\":\"M\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"925\",\"COND_TYPE\":\"ZDSR\",\"CONBASEVAL\":\"18496.550000000\",\"COND_VALUE\":\"0.017000000\",\"CONDVALUE\":\"3.140000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"946\",\"COND_TYPE\":\"ZLSE\",\"CONBASEVAL\":\"5.000000000\",\"COND_VALUE\":\"0.000000000\",\"CONDVALUE\":\"5606.500000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"991\",\"COND_TYPE\":\"IPS3\",\"CONBASEVAL\":\"6415.200000000\",\"COND_VALUE\":\"1.650000000\",\"CONDVALUE\":\"105.850000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"993\",\"COND_TYPE\":\"ICN3\",\"CONBASEVAL\":\"6415.200000000\",\"COND_VALUE\":\"7.600000000\",\"CONDVALUE\":\"487.560000000\",\"CONDISACTI\":\"\"},{\"SD_DOC\":\"\",\"CONDIT_NO\":\"\",\"ITM_NUMBER\":\"000001\",\"COND_ST_NO\":\"995\",\"COND_TYPE\":\"ZFRS\",\"CONBASEVAL\":\"46923.890000000\",\"COND_VALUE\":\"5.750000000\",\"CONDVALUE\":\"5.750000000\",\"CONDISACTI\":\"\"}]"
-      },
-      {
-        "name": "mCBkPP2s_smop",
+        "name": "[]mCBkPP2s : zsdsf[/]",
         "smop": {
           "operation": "$append(param3, param1.ZSDSF_CONDITIONS[ITM_NUMBER = $$.param2.ITM_NUMBER])",
           "param1": "{}G7lsHze5 : body{/}",
           "param2": "{}OFpEv1Bt : element{/}",
           "param3": "[]mCBkPP2s : zsdsf[/]"
         }
-      },
-      {
-        "name": "mCBkPP2s",
-        "value": true
-      },
-      {
-        "name": "mCBkPP2s_key",
-        "value": "zsdsf"
-      },
-      {
-        "name": "mCBkPP2s_type",
-        "value": "array"
-      },
-      {
-        "name": "mCBkPP2s_example",
-        "value": ""
-      },
-      {
-        "name": "mCBkPP2s_required",
-        "value": false
       }
     ],
     "origin": "none",
@@ -461,31 +390,8 @@
     "description": "Realiza a atualizaçao de parametros do fluxo",
     "parameters": [
       {
-        "name": "QQCVSxi2_value",
+        "name": "[]QQCVSxi2 : itens[/]",
         "value": "[]"
-      },
-      {
-        "name": "QQCVSxi2_smop"
-      },
-      {
-        "name": "QQCVSxi2",
-        "value": true
-      },
-      {
-        "name": "QQCVSxi2_key",
-        "value": "itens"
-      },
-      {
-        "name": "QQCVSxi2_type",
-        "value": "array"
-      },
-      {
-        "name": "QQCVSxi2_example",
-        "value": ""
-      },
-      {
-        "name": "QQCVSxi2_required",
-        "value": false
       }
     ],
     "origin": "none",

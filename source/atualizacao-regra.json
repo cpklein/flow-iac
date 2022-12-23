@@ -1,0 +1,424 @@
+[
+  {
+    "module_id": "parameters",
+    "name": "flow Parameters",
+    "information": "flow parameters definition",
+    "type": "parameters",
+    "subtype": "flow",
+    "operation": "none",
+    "description": "flow parameters definition",
+    "parameters": [
+      {
+        "name": "ponteiro",
+        "id": "[]zV49r6Gl : ponteiro[/]",
+        "type": "string",
+        "description": "Ponteiro Temporal Systax",
+        "sample": "20221121010008"
+      },
+      {
+        "name": "novo_ponteiro",
+        "id": "[]SS2Kh2IY : novo_ponteiro[/]",
+        "type": "string",
+        "description": "Novo Ponteiro Temporal Systax",
+        "sample": "20221121010008"
+      },
+      {
+        "name": "id_cenario",
+        "id": "[]PI0Gpd4D : id_cenario[/]",
+        "type": "string",
+        "description": "ID de cenário",
+        "sample": "1"
+      },
+      {
+        "name": "codigo_produto",
+        "id": "[]Tki1QaYC : codigo_produto[/]",
+        "type": "string",
+        "description": "Código de Produto",
+        "sample": "1"
+      },
+      {
+        "name": "origem",
+        "id": "[]m0RcnCFp : origem[/]",
+        "type": "number",
+        "description": "Origem do Produto",
+        "sample": "0"
+      },
+      {
+        "name": "usuario",
+        "id": "[]h5OIJ8JS : usuario[/]",
+        "type": "string",
+        "description": "Usuário Systax",
+        "sample": "naxxion.materiais@construcao.com.br"
+      },
+      {
+        "name": "senha",
+        "id": "[]XRQ7y5yz : senha[/]",
+        "type": "string",
+        "description": "Senha Systax",
+        "sample": "DsLy3PD2rZ"
+      },
+      {
+        "name": "pagina",
+        "id": "[]loLjhv2H : pagina[/]",
+        "type": "number",
+        "description": "Tamanho de Página de Leitura",
+        "sample": "100"
+      },
+      {
+        "name": "counter_regras",
+        "id": "[]PAmtecFP : counter_regras[/]",
+        "type": "number",
+        "description": "Contador de regras atualizadas",
+        "sample": "145615"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "xCko3M4V",
+    "name": "TIME_TRIGGER",
+    "information": "Roda uma vez ao dia",
+    "type": "trigger",
+    "subtype": "timer",
+    "operation": "repeat",
+    "parameters": [
+      {
+        "name": "start",
+        "value": "2021-08-31T04:00:32.302Z"
+      },
+      {
+        "name": "end",
+        "value": ""
+      },
+      {
+        "name": "frequency",
+        "value": "every"
+      },
+      {
+        "name": "time",
+        "value": "1 day"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "VYuEG3lM"
+      }
+    ]
+  },
+  {
+    "module_id": "KKpKWqxC",
+    "name": "Data Transformation",
+    "information": "Monta Descritivo",
+    "type": "tool",
+    "subtype": "transform",
+    "operation": "QUERY",
+    "description": "Módulo para fazer transformação de dados",
+    "parameters": [
+      {
+        "name": "jsonata",
+        "value": "(\n    $page := $number(result.page);\n    /* Calcula onde esta ultimo cenario */\n    $last_cen := $count($$.result.cenario)-1;\n    /* Calcula onde esta ultimo produto desse cenario */\n    $last_prod := $count($$.result.cenario[$last_cen].retorno)-1;\n    /* timestamp dos objetos */\n    $timestamp := $now('[Y0001]-[M01]-[D01] [H01]:[m01]:[s01].[f001]');\n    /* monta conjunto completo de regras */\n    $regras := result.cenario.retorno.[\n                {\n                  \"root_ent_sai\" : $replace(%.ent_sai, /\\\"/, \" \"),\n                  \"root_id_cenario\" : $replace(%.id_cenario, /\\\"/, \" \"),\n                  \"root_id_cenario_principal\" : $replace(%.id_cenario_principal, /\\\"/, \" \"),\n                  \"root_apelido\" : $replace(%.apelido, /\\\"/, \" \"),\n                  \"root_dias_futuros\" : $replace(%.dias_futuros, /\\\"/, \" \"),\n                  \"root_grupo_produtos\" : $replace(%.grupo_produtos, /\\\"/, \" \"),\n                  \"root_uf_origem\" : $replace(%.uf_origem, /\\\"/, \" \"),\n                  \"root_uf_destino\" : $replace(%.uf_destino, /\\\"/, \" \"),\n                  \"root_origem\" : $replace(%.origem, /\\\"/, \" \"),\n                  \"root_destinacao\" : $replace(%.destinacao, /\\\"/, \" \"),\n                  \"root_cod_natureza_operacao\" : $replace(%.cod_natureza_operacao, /\\\"/, \" \"),\n                  \"root_municipio_origem\" : $replace(%.municipio_origem, /\\\"/, \" \"),\n                  \"root_municipio_destino\" : $replace(%.municipio_destino, /\\\"/, \" \"),\n                  \"root_cnae_destinatario\" : $replace(%.cnae_destinatario, /\\\"/, \" \"),\n                  \"root_finalidade\" : $replace(%.finalidade, /\\\"/, \" \"),\n                  \"root_retorno_cod_prod\" : $replace(cod_prod, /\\\"/, \" \"),\n                  \"root_retorno_descricao\" : $replace(descricao, /\\\"/, \" \"),\n                  \"root_retorno_ean\" : $replace(ean, /\\\"/, \" \"),\n                  \"root_retorno_ncm\" : $replace(ncm, /\\\"/, \" \"),\n                  \"root_retorno_ex_tipi\" : $replace(ex_tipi, /\\\"/, \" \"),\n                  \"root_retorno_origem_produto\" : $replace(origem_produto, /\\\"/, \" \"),\n                  \"root_retorno_cfop\" : $replace(cfop, /\\\"/, \" \"),\n                  \"root_retorno_cfop_entrada\" : $replace(cfop_entrada, /\\\"/, \" \"),\n                  \"root_retorno_cest\" : $replace(cest, /\\\"/, \" \"),\n                  \"root_retorno_icms_cst\" : $replace(icms.cst, /\\\"/, \" \"),\n                  \"root_retorno_icms_bc_composicao\" : icms.bc_composicao,\n                  \"root_retorno_icms_bc_composicao_sn_especial\" : icms.bc_composicao_sn_especial,\n                  \"root_retorno_icms_bc_composicao_fcp\" : icms.bc_composicao_fcp,\n                  \"root_retorno_icms_p_red_bc\" : $replace(icms.p_red_bc, /\\\"/, \" \"),\n                  \"root_retorno_icms_percentual_diferimento\" : $replace(icms.percentual_diferimento, /\\\"/, \" \"),\n                  \"root_retorno_icms_aliquota\" : $replace(icms.aliquota, /\\\"/, \" \"),\n                  \"root_retorno_icms_aliquota_cf\" : $replace(icms.aliquota_cf, /\\\"/, \" \"),\n                  \"root_retorno_icms_aliquota_sn_especial\" : $replace(icms.aliquota_sn_especial, /\\\"/, \" \"),\n                  \"root_retorno_icms_aliquota_desonerada\" : $replace(icms.aliquota_desonerada, /\\\"/, \" \"),\n                  \"root_retorno_icms_fcp\" : $replace(icms.fcp, /\\\"/, \" \"),\n                  \"root_retorno_icms_valor_pauta\" : $replace(icms.valor_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_unidade_pauta\" : $replace(icms.unidade_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_dif_aliq_nao_contrib\" : $replace(icms.dif_aliq_nao_contrib, /\\\"/, \" \"),\n                  \"root_retorno_icms_generico\" : $replace(icms.generico, /\\\"/, \" \"),\n                  \"root_retorno_icms_vigencia_de\" : $replace(icms.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_icms_vigencia_ate\" : $replace(icms.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_icms_dispositivo_legal\" : $replace($replace(icms.dispositivo_legal, /\\\"/, \" \"), \"'\", \"''\"),\n                  \"root_retorno_icms_observacoes\" : $replace(icms.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_icms_inf_adicionais\" : $replace(icms.inf_adicionais, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_bc_composicao\" : icms.icms_st.bc_composicao,\n                  \"root_retorno_icms_icms_st_bc_composicao_fcp\" : icms.icms_st.bc_composicao_fcp,\n                  \"root_retorno_icms_icms_st_p_red_bc_st\" : $replace(icms.icms_st.p_red_bc_st, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_aliquota_st\" : $replace(icms.icms_st.aliquota_st, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_fcp\" : $replace(icms.icms_st.fcp, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_carga_media\" : $replace(icms.icms_st.carga_media, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_mva\" : $replace(icms.icms_st.mva, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_mva_ajustado\" : $replace(icms.icms_st.mva_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_mva_lista_positiva_ajustado\" : $replace(icms.icms_st.mva_lista_positiva_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_mva_lista_negativa_ajustado\" : $replace(icms.icms_st.mva_lista_negativa_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_mva_lista_neutra_ajustado\" : $replace(icms.icms_st.mva_lista_neutra_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_valor_pauta\" : $replace(icms.icms_st.valor_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_unidade_pauta\" : $replace(icms.icms_st.unidade_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_generico\" : $replace(icms.icms_st.generico, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_vigencia_de\" : $replace(icms.icms_st.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_vigencia_ate\" : $replace(icms.icms_st.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_dispositivo_legal\" : $replace(icms.icms_st.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_observacoes\" : $replace(icms.icms_st.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_estatistica\" : $replace(icms.icms_st.estatistica, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_st_severidade\" : $replace(icms.icms_st.severidade, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_cst\" : $replace(icms.icms_uf_dest.cst, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_bc_composicao\" : icms.icms_uf_dest.bc_composicao,\n                  \"root_retorno_icms_icms_uf_dest_bc_composicao_fcp\" : icms.icms_uf_dest.bc_composicao_fcp,\n                  \"root_retorno_icms_icms_uf_dest_p_red_bc\" : $replace(icms.icms_uf_dest.p_red_bc, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_valor_pauta\" : $replace(icms.icms_uf_dest.valor_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_unidade_pauta\" : $replace(icms.icms_uf_dest.unidade_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_aliq_interna_dest\" : $replace(icms.icms_uf_dest.aliq_interna_dest, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_fcp\" : $replace(icms.icms_uf_dest.fcp, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_perc_partilha_dest\" : $replace(icms.icms_uf_dest.perc_partilha_dest, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_generico\" : $replace(icms.icms_uf_dest.generico, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_vigencia_de\" : $replace(icms.icms_uf_dest.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_vigencia_ate\" : $replace(icms.icms_uf_dest.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_icms_icms_uf_dest_dispositivo_legal\" : $replace($replace(icms.icms_uf_dest.dispositivo_legal, /\\\"/, \" \"), \"'\", \"''\"),\n                  \"root_retorno_icms_icms_uf_dest_observacoes\" : $replace(icms.icms_uf_dest.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_icms_estatistica\" : $replace(icms.estatistica, /\\\"/, \" \"),\n                  \"root_retorno_icms_severidade\" : $replace(icms.severidade, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_tipo_antecipacao\" : $replace(icms_antecipacao.tipo_antecipacao, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_encerra_trib\" : $replace(icms_antecipacao.encerra_trib, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_responsavel\" : $replace(icms_antecipacao.responsavel, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_bc_composicao_fcp\" : icms_antecipacao.bc_composicao_fcp,\n                  \"root_retorno_icms_antecipacao_p_red_bc_interna_dest\" : $replace(icms_antecipacao.p_red_bc_interna_dest, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_aliq_interna_dest\" : $replace(icms_antecipacao.aliq_interna_dest, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_fcp\" : $replace(icms_antecipacao.fcp, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_perc_fixo\" : $replace(icms_antecipacao.perc_fixo, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_carga_media\" : $replace(icms_antecipacao.carga_media, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_mva\" : $replace(icms_antecipacao.mva, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_mva_ajustado\" : $replace(icms_antecipacao.mva_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_mva_lista_positiva_ajustado\" : $replace(icms_antecipacao.mva_lista_positiva_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_mva_lista_negativa_ajustado\" : $replace(icms_antecipacao.mva_lista_negativa_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_mva_lista_neutra_ajustado\" : $replace(icms_antecipacao.mva_lista_neutra_ajustado, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_valor_pauta\" : $replace(icms_antecipacao.valor_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_unidade_pauta\" : $replace(icms_antecipacao.unidade_pauta, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_generico\" : $replace(icms_antecipacao.generico, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_vigencia_de\" : $replace(icms_antecipacao.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_vigencia_ate\" : $replace(icms_antecipacao.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_dispositivo_legal\" : $replace(icms_antecipacao.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_observacoes\" : $replace(icms_antecipacao.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_estatistica\" : $replace(icms_antecipacao.estatistica, /\\\"/, \" \"),\n                  \"root_retorno_icms_antecipacao_severidade\" : $replace(icms_antecipacao.severidade, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_indicador_credito\" : credito_icms.indicador_credito,\n                  \"root_retorno_credito_icms_cst_entrada\" : $replace(credito_icms.cst_entrada, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_percentual_credito\" : $replace(credito_icms.percentual_credito, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_generico\" : $replace(credito_icms.generico, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_vigencia_de\" : $replace(credito_icms.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_vigencia_ate\" : $replace(credito_icms.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_dispositivo_legal\" : $replace(credito_icms.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_observacoes\" : $replace(credito_icms.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_indicador_credito\" : credito_icms_antecipacao.indicador_credito,\n                  \"root_retorno_credito_icms_antecipacao_cst_entrada\" : $replace(credito_icms_antecipacao.cst_entrada, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_percentual_credito\" : $replace(credito_icms_antecipacao.percentual_credito, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_generico\" : $replace(credito_icms_antecipacao.generico, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_vigencia_de\" : $replace(credito_icms_antecipacao.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_vigencia_ate\" : $replace(credito_icms_antecipacao.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_dispositivo_legal\" : $replace(credito_icms_antecipacao.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_credito_icms_antecipacao_observacoes\" : $replace(credito_icms_antecipacao.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_ipi_cst\" : $replace(ipi.cst, /\\\"/, \" \"),\n                  \"root_retorno_ipi_cenq\" : $replace(ipi.cenq, /\\\"/, \" \"),\n                  \"root_retorno_ipi_bc_composicao\" : ipi.bc_composicao,\n                  \"root_retorno_ipi_p_red_bc\" : $replace(ipi.p_red_bc, /\\\"/, \" \"),\n                  \"root_retorno_ipi_p_red_aliq\" : $replace(ipi.p_red_aliq, /\\\"/, \" \"),\n                  \"root_retorno_ipi_aliquota\" : $replace(ipi.aliquota, /\\\"/, \" \"),\n                  \"root_retorno_ipi_valor_por_unid_trib\" : $replace(ipi.valor_por_unid_trib, /\\\"/, \" \"),\n                  \"root_retorno_ipi_p_red_val_imp\" : $replace(ipi.p_red_val_imp, /\\\"/, \" \"),\n                  \"root_retorno_ipi_generico\" : $replace(ipi.generico, /\\\"/, \" \"),\n                  \"root_retorno_ipi_vigencia_de\" : $replace(ipi.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_ipi_vigencia_ate\" : $replace(ipi.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_ipi_dispositivo_legal\" : $replace(ipi.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_ipi_observacoes\" : $replace(ipi.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_ipi_inf_adicionais\" : $replace(ipi.inf_adicionais, /\\\"/, \" \"),\n                  \"root_retorno_ipi_estatistica\" : $replace(ipi.estatistica, /\\\"/, \" \"),\n                  \"root_retorno_ipi_severidade\" : $replace(ipi.severidade, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_indicador_credito\" : credito_ipi.indicador_credito,\n                  \"root_retorno_credito_ipi_cst_entrada\" : $replace(credito_ipi.cst_entrada, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_percentual_credito\" : $replace(credito_ipi.percentual_credito, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_generico\" : $replace(credito_ipi.generico, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_vigencia_de\" : $replace(credito_ipi.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_vigencia_ate\" : $replace(credito_ipi.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_dispositivo_legal\" : $replace(credito_ipi.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_credito_ipi_observacoes\" : $replace(credito_ipi.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_pis_cst\" : $replace(pis.cst, /\\\"/, \" \"),\n                  \"root_retorno_pis_bc_composicao\" : pis.bc_composicao,\n                  \"root_retorno_pis_p_red_bc\" : $replace(pis.p_red_bc, /\\\"/, \" \"),\n                  \"root_retorno_pis_aliquota\" : $replace(pis.aliquota, /\\\"/, \" \"),\n                  \"root_retorno_pis_aliquota_especifica\" : $replace(pis.aliquota_especifica, /\\\"/, \" \"),\n                  \"root_retorno_pis_generico\" : $replace(pis.generico, /\\\"/, \" \"),\n                  \"root_retorno_pis_vigencia_de\" : $replace(pis.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_pis_vigencia_ate\" : $replace(pis.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_pis_dispositivo_legal\" : $replace(pis.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_pis_observacoes\" : $replace(pis.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_pis_inf_adicionais\" : $replace(pis.inf_adicionais, /\\\"/, \" \"),\n                  \"root_retorno_pis_codigo_natureza_receita\" : $replace(pis.codigo_natureza_receita, /\\\"/, \" \"),\n                  \"root_retorno_pis_estatistica\" : $replace(pis.estatistica, /\\\"/, \" \"),\n                  \"root_retorno_pis_severidade\" : $replace(pis.severidade, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_indicador_credito\" : credito_pis.indicador_credito,\n                  \"root_retorno_credito_pis_cst_entrada\" : $replace(credito_pis.cst_entrada, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_percentual_credito\" : $replace(credito_pis.percentual_credito, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_generico\" : $replace(credito_pis.generico, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_vigencia_de\" : $replace(credito_pis.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_vigencia_ate\" : $replace(credito_pis.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_dispositivo_legal\" : $replace(credito_pis.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_credito_pis_observacoes\" : $replace(credito_pis.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_cofins_cst\" : $replace(cofins.cst, /\\\"/, \" \"),\n                  \"root_retorno_cofins_bc_composicao\" : cofins.bc_composicao,\n                  \"root_retorno_cofins_p_red_bc\" : $replace(cofins.p_red_bc, /\\\"/, \" \"),\n                  \"root_retorno_cofins_aliquota\" : $replace(cofins.aliquota, /\\\"/, \" \"),\n                  \"root_retorno_cofins_aliquota_especifica\" : $replace(cofins.aliquota_especifica, /\\\"/, \" \"),\n                  \"root_retorno_cofins_generico\" : $replace(cofins.generico, /\\\"/, \" \"),\n                  \"root_retorno_cofins_vigencia_de\" : $replace(cofins.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_cofins_vigencia_ate\" : $replace(cofins.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_cofins_dispositivo_legal\" : $replace(cofins.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_cofins_observacoes\" : $replace(cofins.observacoes, /\\\"/, \" \"),\n                  \"root_retorno_cofins_inf_adicionais\" : $replace(cofins.inf_adicionais, /\\\"/, \" \"),\n                  \"root_retorno_cofins_codigo_natureza_receita\" : $replace(cofins.codigo_natureza_receita, /\\\"/, \" \"),\n                  \"root_retorno_cofins_estatistica\" : $replace(cofins.estatistica, /\\\"/, \" \"),\n                  \"root_retorno_cofins_severidade\" : $replace(cofins.severidade, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_indicador_credito\" : credito_cofins.indicador_credito,\n                  \"root_retorno_credito_cofins_cst_entrada\" : $replace(credito_cofins.cst_entrada, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_percentual_credito\" : $replace(credito_cofins.percentual_credito, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_generico\" : $replace(credito_cofins.generico, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_vigencia_de\" : $replace(credito_cofins.vigencia_de, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_vigencia_ate\" : $replace(credito_cofins.vigencia_ate, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_dispositivo_legal\" : $replace(credito_cofins.dispositivo_legal, /\\\"/, \" \"),\n                  \"root_retorno_credito_cofins_observacoes\" : $replace(credito_cofins.observacoes, /\\\"/, \" \"),\n                  \"DATA_ULT_ALTER\" : $timestamp\n\n            }\n        ];\n    /* conta total de regras */\n    $num_regras := $count($regras);\n    /* se num_regras = page, faremos nova leitura que trara o ultimo*/\n    /* registro dessa leitura novamente. removemos esse registro agora */\n    /* lembrete: indice do array comeca com 0 */\n    $new := $num_regras = $page ? ($num_regras - 2) : ($num_regras - 1);\n/* body */\n{\n    /* slice do ultimo elemento caso necessario*/\n    \"regras\": $regras[[0..$new]],\n    /* quantidade lida nessa interacao */\n    \"prod_count\": $num_regras,\n    /* cenario da proxima leitura */\n    \"last_id_cenario\" : result.cenario[$last_cen].id_cenario,\n    /* cod_prod da proxima leitura */\n    \"last_cod_prod\" : result.cenario[$last_cen].retorno[$last_prod].cod_prod,\n    \"last_origem\" : $number(result.cenario[$last_cen].retorno[$last_prod].origem_produto)\n}\n)\n\n"
+      },
+      {
+        "name": "data",
+        "value": "{\n    \"cenario\" : {}8irRgBZB : cenario{/},\n    \"page\" : \"[]loLjhv2H : pagina[/]\"\n}"
+      },
+      {
+        "name": "type"
+      },
+      {
+        "name": "draggable_data"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "vCtpzGuT"
+      }
+    ]
+  },
+  {
+    "module_id": "vCtpzGuT",
+    "name": "Khan",
+    "information": "Insere no Banco de Dados",
+    "type": "connector",
+    "subtype": "database",
+    "operation": "",
+    "description": "Acesso ao Banco de Dados Khan",
+    "parameters": [
+      {
+        "name": "array_regras",
+        "smop": {
+          "operation": "param1.prod_count = 0 ? [] : param1.regras",
+          "param1": "{}KKpKWqxC : data{/}"
+        }
+      }
+    ],
+    "origin": "7cbIAPTj",
+    "next": [
+      {
+        "type": "single",
+        "id": "dSE4Vlp5"
+      }
+    ]
+  },
+  {
+    "module_id": "dSE4Vlp5",
+    "name": "Update Params",
+    "information": "Atualiza Parametros",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "[]SS2Kh2IY : novo_ponteiro[/]",
+        "smop": {
+          "operation": "param1 = 0 ? param3 : param2",
+          "param1": "{}VYuEG3lM : loopCount{/}",
+          "param2": "[]SS2Kh2IY : novo_ponteiro[/]",
+          "param3": "{}8irRgBZB : ponteiro_atualizacao{/}"
+        }
+      },
+      {
+        "name": "[]PI0Gpd4D : id_cenario[/]",
+        "value": "{}KKpKWqxC : data.last_id_cenario{/}"
+      },
+      {
+        "name": "[]Tki1QaYC : codigo_produto[/]",
+        "value": "{}KKpKWqxC : data.last_cod_prod{/}"
+      },
+      {
+        "name": "[]m0RcnCFp : origem[/]",
+        "value": "{}KKpKWqxC : data.last_origem{/}"
+      },
+      {
+        "name": "[]PAmtecFP : counter_regras[/]",
+        "smop": {
+          "operation": "param1.prod_count + param2",
+          "param1": "{}KKpKWqxC : data{/}",
+          "param2": "[]PAmtecFP : counter_regras[/]"
+        }
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "PVrAwpM8"
+      }
+    ]
+  },
+  {
+    "module_id": "VYuEG3lM",
+    "name": "Do While",
+    "information": "Leitura Paginada da Systax",
+    "type": "tool",
+    "subtype": "do",
+    "operation": "start",
+    "description": "Executa um loop com base em alguma lógica condicional",
+    "parameters": [
+      {
+        "name": "loopCount",
+        "value": "{}VYuEG3lM : loopCount{/}"
+      },
+      {
+        "name": "restartLoopCount",
+        "value": "{}PVrAwpM8 : restartLoopCount{/}"
+      },
+      {
+        "name": "whileId",
+        "value": "PVrAwpM8"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "8irRgBZB"
+      }
+    ]
+  },
+  {
+    "module_id": "PVrAwpM8",
+    "name": "Do While",
+    "information": "Retorno enquanto houver registros",
+    "type": "tool",
+    "subtype": "do",
+    "operation": "while",
+    "description": "Executa um loop com base em alguma lógica condicional",
+    "parameters": [
+      {
+        "name": "doId",
+        "value": "VYuEG3lM"
+      },
+      {
+        "name": "condition",
+        "value": "=="
+      },
+      {
+        "name": "variable1value",
+        "value": "{}KKpKWqxC : data.prod_count{/}"
+      },
+      {
+        "name": "variable2value",
+        "value": "[]loLjhv2H : pagina[/]"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "qHYMMlKj"
+      }
+    ]
+  },
+  {
+    "module_id": "qHYMMlKj",
+    "name": "Update Params",
+    "information": "Update Parameters",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "[]zV49r6Gl : ponteiro[/]",
+        "value": "[]SS2Kh2IY : novo_ponteiro[/]"
+      },
+      {
+        "name": "[]PI0Gpd4D : id_cenario[/]",
+        "value": "1"
+      },
+      {
+        "name": "[]Tki1QaYC : codigo_produto[/]",
+        "value": "1"
+      },
+      {
+        "name": "[]m0RcnCFp : origem[/]",
+        "value": "0"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "8irRgBZB",
+    "name": "Systax",
+    "information": "Leitura de Regras Atualizadas ",
+    "type": "connector",
+    "subtype": "REST",
+    "operation": "POST",
+    "description": "Consultoria Fiscal",
+    "parameters": [
+      {
+        "name": "ponteiro_atualizacao",
+        "value": "[]zV49r6Gl : ponteiro[/]"
+      },
+      {
+        "name": "id_cenario",
+        "value": "[]PI0Gpd4D : id_cenario[/]"
+      },
+      {
+        "name": "codigo_produto",
+        "value": "[]Tki1QaYC : codigo_produto[/]"
+      },
+      {
+        "name": "username",
+        "value": "[]h5OIJ8JS : usuario[/]"
+      },
+      {
+        "name": "senha",
+        "value": "[]XRQ7y5yz : senha[/]"
+      },
+      {
+        "name": "origem",
+        "value": "0"
+      },
+      {
+        "name": "pagina",
+        "value": "[]loLjhv2H : pagina[/]"
+      }
+    ],
+    "origin": "dO64Y6kC",
+    "next": [
+      {
+        "type": "single",
+        "id": "vDtBPjh9"
+      }
+    ]
+  },
+  {
+    "module_id": "vDtBPjh9",
+    "name": "IF",
+    "information": "Caso de erro da Systax",
+    "type": "tool",
+    "subtype": "if",
+    "operation": "IF",
+    "description": "Módulo IF",
+    "parameters": [
+      {
+        "name": "condition",
+        "value": "=="
+      },
+      {
+        "name": "variable1value",
+        "smop": {
+          "operation": "param1.status",
+          "param1": "{}8irRgBZB : responseHeader{/}"
+        }
+      },
+      {
+        "name": "variable2value",
+        "value": "200"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "true",
+        "id": "KKpKWqxC"
+      },
+      {
+        "type": "false",
+        "id": "c4kurbKz"
+      }
+    ]
+  },
+  {
+    "module_id": "c4kurbKz",
+    "name": "Log",
+    "information": "Gera logs de erro",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "smop": {
+          "operation": "\"error:\"&param1.cod_status",
+          "param1": "{}8irRgBZB : status{/}"
+        }
+      },
+      {
+        "name": "param2",
+        "smop": {
+          "operation": "\"msg:\"&param1.msg_status",
+          "param1": "{}8irRgBZB : status{/}"
+        }
+      },
+      {
+        "name": "param3",
+        "smop": {
+          "operation": "\"ponteiro:\"&param1",
+          "param1": "{}8irRgBZB : ponteiro_atualizacao{/}"
+        }
+      }
+    ],
+    "origin": "none",
+    "next": []
+  }
+]
