@@ -1,25 +1,14 @@
-participant SAP BRSAPP1
+participant Banco de Dados Postgresql
 participant Integra
-participant SALESFORCE PRD
-note over Integra#lightgray:--**flow Parameters [flow]\nflow parameters definition**\n** data""[b8ip8Mtr] :** [string]""\n    hora\n** hora""[nzPJut5O] :** [string]""\n    hora\n** data_temp""[dQBHEkAE] :** [string]""\n    data_temp\n** hora_temp""[1TQVUenI] :** [string]""\n    hora_temp\n
-note over Integra#lightgray:--**integration Parameters [integration]\nintegration parameters definition**\n** Token""[eRVJRm2B] :** [string]""\n    Token\n** Token PRD""[1AFRROwJ] :** [string]""\n    Token\n
-abox right of Integra: --**TIME_TRIGGER [b13MmDtL]\nGatilho temporal do fluxo**\n**start :** ""2022-09-19T09:00:09.000Z""\n**end :** ""2022-09-20T02:59:09.000Z""\n**frequency :** ""every""\n**time :** ""5 minute""
+Client->Integra: --**API_GATEWAY_TRIGGER [TR001]\nAPI Gateway - Recebe n**\n**apiGatewayId :** ""sqKyV7rZ""\n**apiGatewayVersionId :** ""RaIIsRXZ""\n**apiGatewayPathId :** ""i2VaSRYV""
 activate Integra
-rbox over Integra: --**Update Params [4GEDZjLP]\nSalva parametros temporarios de data e hora do inicio da execução para a próxima execução**\n**[]dQBHEkAE : data_temp[/] : SMOP**\n    **operation :** ""$fromMillis($millis(), "[Y0001][M01][D01]")""\n    **param1 :** """"\n**[]1TQVUenI : hora_temp[/] : SMOP**\n    **operation :** ""$fromMillis($millis(), "[H01][m01][s01]", "-0300")""\n    **param1 :** """"
-Integra->SAP BRSAPP1:--**SAP BRSAPP1 [BBm62qz9]\nUtiliza os parametros de data e hora para buscar as areas de vendas novas e alteradas**\n**I_DATA :** ""[]b8ip8Mtr : data[/]""\n**I_HORA :** ""[]nzPJut5O : hora[/]""
-activate SAP BRSAPP1
-SAP BRSAPP1->Integra:--**RESPONSE**
-deactivate SAP BRSAPP1
-group FOR
-note over Integra#lightgray:--**For [6vrknzf9]\nInicio do loop FOR para atualizar as areas de vendas 1 a 1**\n**loopCounter :** ""{}6vrknzf9 : loopCounter{/}""\n**forEndId :** ""OX0yXAgQ""\n**restartLoopCounter :** ""{}OX0yXAgQ : restartLoopCounter{/}""\n**array : SMOP**\n    **operation :** ""param1.TRET_AREAVENDAS""\n    **param1 :** ""{}BBm62qz9 : body{/}""
-rbox over Integra: --**Data Transformation [6WwRXMt5]\nFormata o retorno do SAP para o retorno esperado no SalesForce**\n**jsonata :** ""[jsonata expression bellow]""\n**data :** ""{}6vrknzf9 : element{/}""
+Integra->Banco de Dados Postgresql:--**Banco de Dados Postgresql [CN001]\nConsulta os últimos n registros**\n**n :** ""{}TR001 : query.n{/}""
+activate Banco de Dados Postgresql
+Banco de Dados Postgresql->Integra:--**RESPONSE**
+deactivate Banco de Dados Postgresql
+rbox over Integra: --**Log [TL002]\nLog de execução**\n**param1 :** ""{}TR001 : query.n{/}""
+rbox over Integra: --**Return [TL001]\nRetona dados processados**\n**data :** ""{}CN001 : rows{/}""\n**jsonata :** ""[jsonata expression bellow]""
 expandable+ #lightgray --JSONATA Expression **[click to expand]
-rbox over Integra: --**jsonata :** ""{\n    "codSap" : $join([result.KUNNR, "-", result.VKORG_VTWEG_SPART]),\n    "nomeAreaDeVendas" : result.VKORG_VTWEG_SPART,\n    "codCliente" : result.KUNNR,\n    "codLocalCobranca" : result.KUNN2_PG,\n    "codLocalEntrega" : result.KUNN2_RF,\n    "codOrganizacao" : result.VKORG_VTEXT,\n    "canalDistribuicao" : result.VTWEG_VTEXT,\n    "canalVendas" : result.ZZSCH,\n    "setorAtividades" : result.SPART_VTEXT,\n    "codCondPagto" : result.ZTERM,\n    "grpClientes" : result.BEZEI,\n    "nomeGrupoCliente" : result.GRUPO,\n    "equipeVenda1" : result.VKGRP,\n    "escritorioVenda1" : result.VKBUR,\n    "equipeVenda2" : result.ZZVKGRP2,\n    "escritorioVenda2" : result.ZZVKBUR2,\n    "equipeVenda3" : result.ZZVKGRP3,\n    "escritorioVenda3" : result.ZZVKBUR3,\n    "equipeVenda4" : result.ZZVKGRP4,\n    "escritorioVenda4" : result.ZZVKBUR4,\n    "equipeVenda5" : result.ZZVKGRP5,\n    "escritorioVenda5" : result.ZZVKBUR5,\n    "equipeVenda6" : result.ZZVKGRP6,\n    "escritorioVenda6" : result.ZZVKBUR6,\n    "equipeVenda7" : result.ZZVKGRP7,\n    "escritorioVenda7" : result.ZZVKBUR7,\n    "equipeVenda8" : result.ZZVKGRP8,\n    "escritorioVenda8" : result.ZZVKBUR8,\n    "equipeVenda9" : result.ZZVKGRP9,\n    "escritorioVenda9" : result.ZZVKBUR9,\n    "equipeVenda10" : result.ZZVKGRP10,\n    "escritorioVenda10" : result.ZZVKBUR10,\n    "areaControleCred" : result.KKBER,\n    "contaNoCliente" : result.EIKTO,\n    "codContaCred" : result.KNKLI\n}""
+rbox over Integra: --**jsonata :** ""{\n    "records" : $count(result),\n    "avg_rate" : $average(result.rate),\n    "max_rate" : $max(result.rate),\n    "min_rate" : $min(result.rate),\n    "time_begin" : $fromMillis($min(result.$toMillis(time))),\n    "time_end" : $fromMillis($max(result.$toMillis(time))),\n    "rates": result \n}""
 end
-Integra->SALESFORCE PRD:--**SALESFORCE PRD [4oL4SzST]\nEnvia as atualizações/Criações para o SalesForce**\n**body :** ""{}6WwRXMt5 : data{/}""\n**Auth :** ""()1AFRROwJ : Token PRD(/)""
-activate SALESFORCE PRD
-SALESFORCE PRD->Integra:--**RESPONSE**
-deactivate SALESFORCE PRD
-rbox over Integra: --**Log [qLKVMulo]\nLoga o retorno do SalesForce**\n**param1 :** ""{}hU6ujNDi : responseHeader{/}""\n**param2 :** ""{}hU6ujNDi : resposta{/}""
-end
-rbox over Integra: --**Update Params [eHCvH8PA]\nAtualiza os parametros de data e hora da próxima chamada para os parametros temporários captados no inicio do fluxo**\n**[]b8ip8Mtr : data[/] :** ""[]dQBHEkAE : data_temp[/]""\n**[]nzPJut5O : hora[/] :** ""[]1TQVUenI : hora_temp[/]""
+Integra->Client: --**RESPONSE

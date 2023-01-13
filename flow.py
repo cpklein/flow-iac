@@ -2,7 +2,7 @@
 
 # Files and directory
 DIRECTORY = '/Users/caio/Development/integra/flow/source'
-IAC_FILE = 'areadevendas.json'
+IAC_FILE = 'trigger.json'
 OUT_FILE = 'sequence_diagram.txt'
 
 # Execute remap
@@ -162,19 +162,28 @@ def replace_id_table(module, id_map, new_modules):
     new_modules.append(n_mod)
     if n_mod['type'] == 'parameters':
         for parm in n_mod['parameters']:
-            match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.-_ ]+)[\{\[<]/[\]\}>]', parm['id'])
+            match = re.search(r'[\{\[<][\]\}>](\w+) : (.+)[\{\[<]/[\]\}>]', parm['id'])
             if match:
                 # Replace the id by the new ID mapped on id_map
                 parm['id'] = parm['id'].replace(match[1], id_map[match[1]])
     else:
         # Replace the module id
         n_mod['module_id'] = id_map[n_mod['module_id']]
+
+        # For Update Parameters we must also check on the name 
+        if n_mod['subtype'] == "UPDATE_PARAMS":
+            for parm in n_mod['parameters']:
+                match = re.search(r'[\{\[<][\]\}>](\w+) : (.+)[\{\[<]/[\]\}>]', parm['name'])
+                if match:
+                    # Replace the id by the new ID mapped on id_map
+                    parm['name'] = parm['name'].replace(match[1], id_map[match[1]])
+            
         # Replace the parameters
         for parm in n_mod['parameters']:
             if 'value' in parm.keys():
                 if type(parm['value']) == str:
                     # Search for the parameter format
-                    match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.-_ ]+)[\{\[<]/[\]\}>]', parm['value'])
+                    match = re.search(r'[\{\[<][\]\}>](\w+) : (.+)[\{\[<]/[\]\}>]', parm['value'])
                     if match:
                         old_id = match[1]
                     # It may also be the whole string    
@@ -188,7 +197,7 @@ def replace_id_table(module, id_map, new_modules):
                 for parmN in parm['smop'].keys():
                     # We get also the operations in the loop but this shouldn't matter
                     # Search for the parameter format
-                    match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.-_ ]+)[\{\[<]/[\]\}>]', parm['smop'][parmN])
+                    match = re.search(r'[\{\[<][\]\}>](\w+) : (.+)[\{\[<]/[\]\}>]', parm['smop'][parmN])
                     if match:
                         old_id = match[1]
                     # It may also be the whole string    
@@ -230,7 +239,7 @@ def build_id_table(module, id_map):
 def build_par_table(parameters, id_map):
     for parm in parameters:
         # Search for parameters in the form []id : name[/] 
-        match = re.search(r'[\{\[<][\]\}>](\w+) : ([\w.-_ ]+)[\{\[<]/[\]\}>]', parm['id'])
+        match = re.search(r'[\{\[<][\]\}>](\w+) : (.+)[\{\[<]/[\]\}>]', parm['id'])
         # add parameter to id_map list of its type
         id_map['parameter'].append(match[1])
         # Create a new entry on id_map with a sequential name for its type
@@ -242,7 +251,7 @@ def process_flow_parms(module):
     line = line + module['information'] + "**\\n"
     # Walkthrough parameters
     for param in module['parameters']:
-        id_name = re.search(r'\[\](\w+) : ([\w.-_ ]+)\[/\]', param['id'])
+        id_name = re.search(r'\[\](\w+) : (.+)\[/\]', param['id'])
         line = line + '** ' + param['name'] 
         line = line + '""[' + id_name[1] + ']' 
         line = line + ' :** ' + '[' + param['type'] + ']""' + "\\n"
@@ -348,7 +357,10 @@ def process_parameters(parameters):
                     line = '**' + parameter['name'] + ' :** ""' + parameter['value'] + '""' 
             elif type(parameter['value']) == list:
                 line = '**' + parameter['name'] + ' :** ""' + ','.join(parameter['value']) + '""'
+            elif type(parameter['value'] == int):
+                line = '**' + parameter['name'] + ' :** ""' +str(parameter['value']) + '""'
             lines.append (line)
+            
         elif 'smop' in parameter.keys():
             line = '**' + parameter['name'] + ' : SMOP**'
             lines.append (line)

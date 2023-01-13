@@ -1,0 +1,100 @@
+[
+  {
+    "module_id": "JxYv6zfc",
+    "name": "Banco de Dados Postgresql",
+    "information": "Consulta os últimos n registros",
+    "type": "connector",
+    "subtype": "database",
+    "operation": "Retrieve Rates",
+    "description": "Acesso a taxas de câmbio",
+    "parameters": [
+      {
+        "name": "n",
+        "value": "{}TumuSqy4 : body.n{/}"
+      }
+    ],
+    "origin": "eyEu9lJ4",
+    "next": [
+      {
+        "type": "single",
+        "id": "uUM5vGY9"
+      }
+    ]
+  },
+  {
+    "module_id": "cNXCt5vu",
+    "name": "Return",
+    "information": "Retona dados processados",
+    "type": "tool",
+    "subtype": "RETURN",
+    "operation": "RETURN",
+    "description": "Retorna os dados de uma requisição",
+    "parameters": [
+      {
+        "name": "data",
+        "value": "{}JxYv6zfc : rows{/}"
+      },
+      {
+        "name": "jsonata",
+        "value": "{\n    \"records\" : $count(result),\n    \"avg_rate\" : $average(result.rate),\n    \"max_rate\" : $max(result.rate),\n    \"min_rate\" : $min(result.rate),\n    \"time_begin\" : $fromMillis($min(result.$toMillis(time))),\n    \"time_end\" : $fromMillis($max(result.$toMillis(time))),\n    \"rates\": result \n}"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "uUM5vGY9",
+    "name": "Log",
+    "information": "Log de execução",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "value": "{}TumuSqy4 : body.n{/}"
+      },
+      {
+        "name": "param2",
+        "smop": {
+          "operation": "param1.n",
+          "param1": "{}trigger : body{/}"
+        }
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "cNXCt5vu"
+      }
+    ]
+  },
+  {
+    "module_id": "TumuSqy4",
+    "name": "WEBHOOK_TRIGGER",
+    "information": "Webhook",
+    "type": "trigger",
+    "subtype": "webhook",
+    "operation": "webhook",
+    "description": "Webhook trigger for flow QeVCPIHb",
+    "parameters": [
+      {
+        "name": "url",
+        "value": "https://treinamento-integra.api.integrasky.cloud/QeVCPIHb"
+      },
+      {
+        "name": "authEmail",
+        "value": "treinamento-integra-retrieve-rate-to-user-QeVCPIHb"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "JxYv6zfc"
+      }
+    ]
+  }
+]

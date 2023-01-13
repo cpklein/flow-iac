@@ -1,0 +1,240 @@
+[
+  {
+    "module_id": "parameters",
+    "name": "flow Parameters",
+    "information": "flow parameters definition",
+    "type": "parameters",
+    "subtype": "flow",
+    "operation": "none",
+    "description": "flow parameters definition",
+    "parameters": [
+      {
+        "name": "time_start",
+        "id": "[]GxGh0ULf : time_start[/]",
+        "type": "string",
+        "description": "Start range time",
+        "sample": "2023-01-08T00:45:45.934Z"
+      },
+      {
+        "name": "time_end",
+        "id": "[]A0T5RadH : time_end[/]",
+        "type": "string",
+        "description": "End range time",
+        "sample": "2023-01-08T01:00:00"
+      },
+      {
+        "name": "X-CoinAPI-Key",
+        "id": "[]nbG64Wfv : X-CoinAPI-Key[/]",
+        "type": "string",
+        "description": "Authentication Key",
+        "sample": "5F96F38A-30E3-4132-BA94-02ACECEC56AF"
+      }
+    ],
+    "next": []
+  },
+  {
+    "module_id": "BBKbSxDR",
+    "name": "TIME_TRIGGER",
+    "information": "Dipara 1 vez ao dia",
+    "type": "trigger",
+    "subtype": "timer",
+    "operation": "repeat",
+    "description": "Trigger repeat for flow dXpO1Jcd",
+    "parameters": [
+      {
+        "name": "start",
+        "value": "2023-01-09T03:00:04.000Z"
+      },
+      {
+        "name": "end",
+        "value": ""
+      },
+      {
+        "name": "frequency",
+        "value": "every"
+      },
+      {
+        "name": "time",
+        "value": "1 day"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "H72igYOs"
+      }
+    ]
+  },
+  {
+    "module_id": "8VmlN47e",
+    "name": "Do While",
+    "information": "Inicia o loop de leitura de trades",
+    "type": "tool",
+    "subtype": "do",
+    "operation": "start",
+    "description": "Executa um loop com base em alguma lógica condicional",
+    "parameters": [
+      {
+        "name": "loopCount",
+        "value": "{}8VmlN47e : loopCount{/}"
+      },
+      {
+        "name": "restartLoopCount",
+        "value": "{}GAOOAyY8 : restartLoopCount{/}"
+      },
+      {
+        "name": "whileId",
+        "value": "GAOOAyY8"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "2muDbqim"
+      }
+    ]
+  },
+  {
+    "module_id": "2muDbqim",
+    "name": "CoinAPI",
+    "information": "Recupera trades do período determinado",
+    "type": "connector",
+    "subtype": "REST",
+    "operation": "GET",
+    "description": "CoinAPI REST Interface",
+    "parameters": [
+      {
+        "name": "time_start",
+        "value": "[]GxGh0ULf : time_start[/]"
+      },
+      {
+        "name": "time_end",
+        "value": "[]A0T5RadH : time_end[/]"
+      },
+      {
+        "name": "X-CoinAPI-Key",
+        "value": "[]nbG64Wfv : X-CoinAPI-Key[/]"
+      }
+    ],
+    "origin": "diJ34LN7",
+    "next": [
+      {
+        "type": "single",
+        "id": "HDeljl82"
+      }
+    ]
+  },
+  {
+    "module_id": "H72igYOs",
+    "name": "Update Params",
+    "information": "Define os valores de time_start e time_end",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "[]GxGh0ULf : time_start[/]",
+        "smop": {
+          "operation": "$now('[Y0001]-[M01]-[D01]T00:00:00','-2400')",
+          "param1": ""
+        }
+      },
+      {
+        "name": "[]A0T5RadH : time_end[/]",
+        "smop": {
+          "operation": "$now('[Y0001]-[M01]-[D01]T01:00:00','-2400')",
+          "param1": ""
+        }
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "8VmlN47e"
+      }
+    ]
+  },
+  {
+    "module_id": "HDeljl82",
+    "name": "Banco de Dados Postgresql",
+    "information": "Insere os trades no banco de dados",
+    "type": "connector",
+    "subtype": "database",
+    "operation": "Write Trade",
+    "description": "Acesso a taxas de câmbio",
+    "parameters": [
+      {
+        "name": "trades",
+        "value": "{}2muDbqim : result{/}"
+      }
+    ],
+    "origin": "eyEu9lJ4",
+    "next": [
+      {
+        "type": "single",
+        "id": "kPBhNstQ"
+      }
+    ]
+  },
+  {
+    "module_id": "kPBhNstQ",
+    "name": "Update Params",
+    "information": "Atualiza o próximo início de leitura para 1ms após o último trade recebido",
+    "type": "tool",
+    "subtype": "UPDATE_PARAMS",
+    "operation": "UPDATE_PARAMS",
+    "description": "Realiza a atualizaçao de parametros do fluxo",
+    "parameters": [
+      {
+        "name": "[]GxGh0ULf : time_start[/]",
+        "smop": {
+          "operation": "$fromMillis($toMillis(param1[$count(param1)-1].time_exchange)+1)",
+          "param1": "{}2muDbqim : result{/}"
+        }
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "GAOOAyY8"
+      }
+    ]
+  },
+  {
+    "module_id": "GAOOAyY8",
+    "name": "Do While",
+    "information": "Retorna ao início do loop caso a página retornada esteja cheia",
+    "type": "tool",
+    "subtype": "do",
+    "operation": "while",
+    "description": "Executa um loop com base em alguma lógica condicional",
+    "parameters": [
+      {
+        "name": "doId",
+        "value": "8VmlN47e"
+      },
+      {
+        "name": "condition",
+        "value": "=="
+      },
+      {
+        "name": "variable1value",
+        "smop": {
+          "operation": "$count(param1)",
+          "param1": "{}2muDbqim : result{/}"
+        }
+      },
+      {
+        "name": "variable2value",
+        "value": "100"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  }
+]

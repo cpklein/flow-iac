@@ -1,0 +1,97 @@
+[
+  {
+    "module_id": "8zar1lsG",
+    "name": "API_GATEWAY_TRIGGER",
+    "information": "API Gateway - Recebe n",
+    "type": "trigger",
+    "subtype": "api",
+    "operation": "api-gateway",
+    "description": "Trigger api-gateway for flow QeVCPIHb",
+    "parameters": [
+      {
+        "name": "apiGatewayId",
+        "value": "sqKyV7rZ"
+      },
+      {
+        "name": "apiGatewayVersionId",
+        "value": "RaIIsRXZ"
+      },
+      {
+        "name": "apiGatewayPathId",
+        "value": "i2VaSRYV"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "JxYv6zfc"
+      }
+    ]
+  },
+  {
+    "module_id": "JxYv6zfc",
+    "name": "Banco de Dados Postgresql",
+    "information": "Consulta os últimos n registros",
+    "type": "connector",
+    "subtype": "database",
+    "operation": "Retrieve Rates",
+    "description": "Acesso a taxas de câmbio",
+    "parameters": [
+      {
+        "name": "n",
+        "value": "{}8zar1lsG : query.n{/}"
+      }
+    ],
+    "origin": "eyEu9lJ4",
+    "next": [
+      {
+        "type": "single",
+        "id": "uUM5vGY9"
+      }
+    ]
+  },
+  {
+    "module_id": "cNXCt5vu",
+    "name": "Return",
+    "information": "Retona dados processados",
+    "type": "tool",
+    "subtype": "RETURN",
+    "operation": "RETURN",
+    "description": "Retorna os dados de uma requisição",
+    "parameters": [
+      {
+        "name": "data",
+        "value": "{}JxYv6zfc : rows{/}"
+      },
+      {
+        "name": "jsonata",
+        "value": "{\n    \"records\" : $count(result),\n    \"avg_rate\" : $average(result.rate),\n    \"max_rate\" : $max(result.rate),\n    \"min_rate\" : $min(result.rate),\n    \"time_begin\" : $fromMillis($min(result.$toMillis(time))),\n    \"time_end\" : $fromMillis($max(result.$toMillis(time))),\n    \"rates\": result \n}"
+      }
+    ],
+    "origin": "none",
+    "next": []
+  },
+  {
+    "module_id": "uUM5vGY9",
+    "name": "Log",
+    "information": "Log de execução",
+    "type": "tool",
+    "subtype": "LOG",
+    "operation": "LOG",
+    "description": "Logar eventos",
+    "parameters": [
+      {
+        "name": "param1",
+        "value": "{}8zar1lsG : query.n{/}"
+      }
+    ],
+    "origin": "none",
+    "next": [
+      {
+        "type": "single",
+        "id": "cNXCt5vu"
+      }
+    ]
+  }
+]
