@@ -2,7 +2,7 @@
 
 # Files and directory
 DIRECTORY = '/Users/caio/Development/integra/flow/source'
-IAC_FILE = 'trigger.json'
+IAC_FILE = 'trades-page.json'
 OUT_FILE = 'sequence_diagram.txt'
 
 # Execute remap
@@ -248,7 +248,8 @@ def build_par_table(parameters, id_map):
 def process_flow_parms(module):
     line = "note over Integra#lightgray:--**"
     line = line + module['name'] + " [" + module['subtype'] + ']' + "\\n"
-    line = line + module['information'] + "**\\n"
+    # information may have multiple lines
+    line = line + module['information'].replace('\n', '\\n') + "**\\n"
     # Walkthrough parameters
     for param in module['parameters']:
         id_name = re.search(r'\[\](\w+) : (.+)\[/\]', param['id'])
@@ -274,7 +275,7 @@ def update_vectors(module, vectors):
 
 def process_trigger(module, sequence_diagram):
     line_base =  module['name'] + " [" + module['module_id'] + ']' + "\\n"
-    line_base = line_base + module['information'] + "**\\n"
+    line_base = line_base + module['information'].replace('\n', '\\n') + "**\\n"
     if module['subtype'] == 'api':
         line = "Client->Integra: --**"
     elif module['subtype'] == 'webhook':
@@ -289,7 +290,7 @@ def process_tool(module, sequence_diagram):
     # Process parameters
     # lines of information - valid for all types 
     line_base =  module['name'] + " [" + module['module_id'] + ']' + "\\n"
-    line_base = line_base + module['information'] + "**\\n"        
+    line_base = line_base + module['information'].replace('\n', '\\n') + "**\\n"        
     parameters = process_parameters(module['parameters'])
     # Specific Lines for each module type
     if ((module['subtype'] == 'for') and (module['operation'] == 'start')):
@@ -332,7 +333,7 @@ def process_connector(module, sequence_diagram):
     line = "Integra->" + module['name'] + ":--**" 
     line = line + module['name']
     line = line + ' [' + module['module_id'] + ']' + "\\n"
-    line = line + module['information'] + "**\\n"    
+    line = line + module['information'].replace('\n', '\\n') + "**\\n"    
     parameters = process_parameters(module['parameters'])
     line = line + parameters
     sequence_diagram.append(line)

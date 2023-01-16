@@ -1,14 +1,19 @@
-participant Banco de Dados Postgresql
+participant CoinAPI
 participant Integra
-Client->Integra: --**API_GATEWAY_TRIGGER [TR001]\nAPI Gateway - Recebe n**\n**apiGatewayId :** ""sqKyV7rZ""\n**apiGatewayVersionId :** ""RaIIsRXZ""\n**apiGatewayPathId :** ""i2VaSRYV""
+participant Banco de Dados Postgresql
+note over Integra#lightgray:--**flow Parameters [flow]\nflow parameters definition**\n** time_start""[PM001] :** [string]""\n    Start range time\n** time_end""[PM002] :** [string]""\n    End range time\n** X-CoinAPI-Key""[PM003] :** [string]""\n    Authentication Key\n
+abox right of Integra: --**TIME_TRIGGER [TR001]\nDipara 1 vez ao dia**\n**start :** ""2023-01-09T03:00:04.000Z""\n**end :** """"\n**frequency :** ""every""\n**time :** ""1 day""
 activate Integra
-Integra->Banco de Dados Postgresql:--**Banco de Dados Postgresql [CN001]\nConsulta os últimos n registros**\n**n :** ""{}TR001 : query.n{/}""
+rbox over Integra: --**Update Params [TL002]\nDefine os valores de time_start e time_end\ntime_start é 00:00:00 do dia anterior\ntime_end é 00:15:00 do mesmo dia**\n**[]PM001 : time_start[/] : SMOP**\n    **operation :** ""$now('[Y0001]-[M01]-[D01]T00:00:00','-2400')""\n    **param1 :** """"\n**[]PM002 : time_end[/] : SMOP**\n    **operation :** ""$now('[Y0001]-[M01]-[D01]T01:00:00','-2400')""\n    **param1 :** """"
+group DO
+Integra->CoinAPI:--**CoinAPI [CN001]\nRecupera trades do período determinado**\n**time_start :** ""[]PM001 : time_start[/]""\n**time_end :** ""[]PM002 : time_end[/]""\n**X-CoinAPI-Key :** ""[]PM003 : X-CoinAPI-Key[/]""
+activate CoinAPI
+CoinAPI->Integra:--**RESPONSE**
+deactivate CoinAPI
+Integra->Banco de Dados Postgresql:--**Banco de Dados Postgresql [CN002]\nInsere os trades no banco de dados**\n**trades :** ""{}CN001 : result{/}""
 activate Banco de Dados Postgresql
 Banco de Dados Postgresql->Integra:--**RESPONSE**
 deactivate Banco de Dados Postgresql
-rbox over Integra: --**Log [TL002]\nLog de execução**\n**param1 :** ""{}TR001 : query.n{/}""
-rbox over Integra: --**Return [TL001]\nRetona dados processados**\n**data :** ""{}CN001 : rows{/}""\n**jsonata :** ""[jsonata expression bellow]""
-expandable+ #lightgray --JSONATA Expression **[click to expand]
-rbox over Integra: --**jsonata :** ""{\n    "records" : $count(result),\n    "avg_rate" : $average(result.rate),\n    "max_rate" : $max(result.rate),\n    "min_rate" : $min(result.rate),\n    "time_begin" : $fromMillis($min(result.$toMillis(time))),\n    "time_end" : $fromMillis($max(result.$toMillis(time))),\n    "rates": result \n}""
+rbox over Integra: --**Update Params [TL003]\nAtualiza o próximo início de leitura para 1ms após o último trade recebido**\n**[]PM001 : time_start[/] : SMOP**\n    **operation :** ""$fromMillis($toMillis(param1[$count(param1)-1].time_exchange)+1)""\n    **param1 :** ""{}CN001 : result{/}""
+note over Integra#lightgray:--**Do While [TL004]\nRetorna ao início do loop caso a página retornada esteja cheia**\n**doId :** ""TL001""\n**condition :** ""==""\n**variable1value : SMOP**\n    **operation :** ""$count(param1)""\n    **param1 :** ""{}CN001 : result{/}""\n**variable2value :** ""100""
 end
-Integra->Client: --**RESPONSE
