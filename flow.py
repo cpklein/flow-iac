@@ -1,5 +1,8 @@
 # Generate text file for Sequence Diagram 
 
+from flask import Flask, request
+from flask.json import jsonify
+
 # Files and directory
 DIRECTORY = '/Users/caio/Development/integra/flow/source'
 IAC_FILE = 'trades-page.json'
@@ -9,10 +12,12 @@ OUT_FILE = 'sequence_diagram.txt'
 REMAP = True
 
 import json
-import os
 import re
 import copy
-import sys
+import base64
+
+app = Flask(__name__)
+
 
 # Goes through the whole flow path. Starts with the trigger and follows the 
 # "next" path. When next has multiple hops, recall the process_flow for each
@@ -383,14 +388,13 @@ def process_jsonata(parameters):
     return ('\\n'.join(lines))
 
 
-# For local test
-if __name__ == "__main__":
-    # iac
-    iac_file = os.path.join(DIRECTORY, IAC_FILE)
-    with open(iac_file, 'r') as mensagem:    
-        data = mensagem.read()
-    # parse file into dictionary
-    source_modules = json.loads(data)
+@app.route('/sequencediagram', methods = ['POST'])
+# Return the sequence diagram 
+def sequencediagram():
+    body = request.get_json()
+    iac_base54 = body.get('iac_file')
+    iac = base64.decodebytes(iac_base54.encode('utf-8')).decode('utf-8')
+    source_modules = json.loads(iac)
     
     modules = []    
     # Replace the original IDs by sequencial mneumonics
@@ -414,16 +418,18 @@ if __name__ == "__main__":
     # Do the work
     process_flow(module, modules, vectors, sequence_diagram)
     # Prepare for printing
-    original_stdout = sys.stdout # Save a reference to the original standard output
-    sd_file = os.path.join(DIRECTORY, OUT_FILE)
-    with open(sd_file, 'w') as out:
-        sys.stdout = out # Change the standard output to the file we created.
-        # Actual printing to file    
-        for connector in connectors:
-            print ("participant", connector)
 
-        for line in param_lines:
-            print (line)
-        for line in sequence_diagram:
-            print (line)
-    sys.stdout = original_stdout # Reset the standard output to its original value    
+    seq_diagram = ''
+    for connector in connectors:
+        seq_diagram = seq_diagram + "participant " + connector + "\n"
+    
+    seq_diagram = seq_diagram + '\n'.join(param_lines) + '\n'.join(sequence_diagram) 
+    seq_diagram_base64 = base64.b64encode(seq_diagram.encode('utf-8')).decode('utf-8')
+
+    text_response = { 'sequence_diagram' : seq_diagram_base64}
+    return jsonify(text_response)
+
+
+# For local test
+if __name__ == "__main__":
+    app.run()
