@@ -2,19 +2,13 @@
 
 from flask import Flask, request
 from flask.json import jsonify
-
-# Files and directory
-DIRECTORY = '/Users/caio/Development/integra/flow/source'
-IAC_FILE = 'trades-page.json'
-OUT_FILE = 'sequence_diagram.txt'
-
-# Execute remap
-REMAP = True
-
 import json
 import re
 import copy
 import base64
+
+# Execute remap
+REMAP = True
 
 app = Flask(__name__)
 
@@ -423,7 +417,7 @@ def sequencediagram():
     for connector in connectors:
         seq_diagram = seq_diagram + "participant " + connector + "\n"
     
-    seq_diagram = seq_diagram + '\n'.join(param_lines) + '\n'.join(sequence_diagram) 
+    seq_diagram = seq_diagram + '\n'.join(param_lines) + '\n' + '\n'.join(sequence_diagram) 
     seq_diagram_base64 = base64.b64encode(seq_diagram.encode('utf-8')).decode('utf-8')
 
     text_response = { 'sequence_diagram' : seq_diagram_base64}
