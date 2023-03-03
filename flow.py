@@ -332,6 +332,8 @@ def process_connector(module, sequence_diagram):
     line = "Integra->" + module['name'] + ":--**" 
     line = line + module['name']
     line = line + ' [' + module['module_id'] + ']' + "\\n"
+    if module['type'] == "connector":
+        line = line + "Operation: **" + module['operation']  + "**\\n"
     line = line + module['information'].replace('\n', '\\n') + "**\\n"    
     parameters = process_parameters(module['parameters'])
     line = line + parameters
